@@ -76,9 +76,9 @@ snapshot_download(
 )
 
 hf_hub_download(
-    repo_id="facebook/sam2-hiera-large",
+    repo_id="facebook/sam2.1-hiera-large",
     local_dir="./checkpoints/",
-    filename="sam2_hiera_large.pt",
+    filename="sam2.1_hiera_large.pt",
 )
 
 
