@@ -30,7 +30,7 @@ from eval.tools.florence_sam import ObjectDetector
 import shutil
 import yaml
 import numpy as np
-from huggingface_hub import snapshot_download
+from huggingface_hub import snapshot_download, hf_hub_download
 import os
 
 # FLUX.1-dev
@@ -74,6 +74,13 @@ snapshot_download(
     local_dir="./checkpoints/XVerse",
     local_dir_use_symlinks=False
 )
+
+hf_hub_download(
+    repo_id="facebook/sam2-hiera-large",
+    local_dir="./checkpoints/",
+    filename="sam2_hiera_large.pt",
+)
+
 
 
 os.environ["FLORENCE2_MODEL_PATH"]    = "./checkpoints/Florence-2-large"
