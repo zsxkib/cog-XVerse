@@ -24,3 +24,4 @@ supervision<=0.25.1
 timm<=1.0.15
 tqdm<=4.67.1
 webdataset<=0.2.111
+sentencepiece
