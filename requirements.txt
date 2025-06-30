@@ -6,7 +6,7 @@ iopath<=0.1.10
 modelscope<=1.23.2
 numpy<2.0.0
 diffusers==0.32.2
-transformers==4.50.0
+transformers==4.46.2
 omegaconf<=2.3.0
 opencv_python<=4.11.0.86
 optimum_quanto<=0.2.6
