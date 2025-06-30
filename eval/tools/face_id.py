@@ -54,6 +54,7 @@ class FaceID:
 
         self.detector = facer.face_detector("retinaface/resnet50", device=device)
         face_model_path = os.getenv("FACE_ID_MODEL_PATH")
+        print(f'this is the way {face_model_path}')
         self.model = Backbone(num_layers=50, drop_ratio=0.6, mode='ir_se')
         self.model.load_state_dict(torch.load(face_model_path, map_location=device))
         self.model.to(device)
