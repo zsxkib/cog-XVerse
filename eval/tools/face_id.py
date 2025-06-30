@@ -51,6 +51,7 @@ class FaceID:
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
         ])
+
         self.detector = facer.face_detector("retinaface/resnet50", device=device)
         face_model_path = os.getenv("FACE_ID_MODEL_PATH")
         self.model = Backbone(num_layers=50, drop_ratio=0.6, mode='ir_se')
