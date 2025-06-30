@@ -36,42 +36,42 @@ import os
 # FLUX.1-dev
 snapshot_download(
     repo_id="black-forest-labs/FLUX.1-dev",
-    local_dir="./FLUX.1-dev",
+    local_dir="./checkpoints/FLUX.1-dev",
     local_dir_use_symlinks=False
 )
 
 # Florence-2-large
 snapshot_download(
     repo_id="microsoft/Florence-2-large",
-    local_dir="./Florence-2-large",
+    local_dir="./checkpoints/Florence-2-large",
     local_dir_use_symlinks=False
 )
 
 # CLIP ViT Large
 snapshot_download(
     repo_id="openai/clip-vit-large-patch14",
-    local_dir="./clip-vit-large-patch14",
+    local_dir="./checkpoints/clip-vit-large-patch14",
     local_dir_use_symlinks=False
 )
 
 # DINO ViT-s16
 snapshot_download(
     repo_id="facebook/dino-vits16",
-    local_dir="./dino-vits16",
+    local_dir="./checkpoints/dino-vits16",
     local_dir_use_symlinks=False
 )
 
 # mPLUG Visual Question Answering
 snapshot_download(
     repo_id="xingjianleng/mplug_visual-question-answering_coco_large_en",
-    local_dir="./mplug_visual-question-answering_coco_large_en",
+    local_dir="./checkpoints/mplug_visual-question-answering_coco_large_en",
     local_dir_use_symlinks=False
 )
 
 # XVerse
 snapshot_download(
     repo_id="ByteDance/XVerse",
-    local_dir="./XVerse",
+    local_dir="./checkpoints/XVerse",
     local_dir_use_symlinks=False
 )
 
