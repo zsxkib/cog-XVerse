@@ -163,7 +163,7 @@ def generate_image(
     *images_captions_faces,  # Combine all unpacked arguments into one tuple
 ):
     torch.cuda.empty_cache()
-    num_images = 4
+    num_images = 1
 
     # Determine the number of images, captions, and faces based on the indexs length
     images = list(images_captions_faces[:num_inputs])
