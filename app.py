@@ -443,7 +443,7 @@ with gr.Blocks() as demo:
     with gr.Row():
         with gr.Column():
             prompt = gr.Textbox(label="Prompt", value="")
-            with gr.Tab("Tiger"):
+            with gr.Accordion("Open for More!", open=False):
                 
                 with gr.Row():
                     target_height = gr.Slider(512, 1024, step=128, value=768, label="Generated Height", info="")
