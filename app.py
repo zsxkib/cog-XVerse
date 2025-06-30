@@ -441,21 +441,17 @@ with gr.Blocks() as demo:
     with gr.Row():
         with gr.Column():
             prompt = gr.Textbox(label="Prompt", value="")
-            # 使用 Row 和 Column 来布局四个图像和描述
             with gr.Row():
                 target_height = gr.Slider(512, 1024, step=128, value=768, label="Generated Height", info="")
                 target_width = gr.Slider(512, 1024, step=128, value=768, label="Generated Width", info="")
                 cond_size = gr.Slider(256, 384, step=128, value=256, label="Condition Size", info="")
             with gr.Row():
-                # 修改 weight_id_ip_str 为两个 Slider
                 weight_id = gr.Slider(0.1, 5, step=0.1, value=3, label="weight_id")
                 weight_ip = gr.Slider(0.1, 5, step=0.1, value=5, label="weight_ip")
             with gr.Row():
-                # 修改 ip_scale_str 为 Slider，并添加 Textbox 显示转换后的格式
                 ip_scale_str = gr.Slider(0.5, 1.5, step=0.01, value=0.85, label="latent_lora_scale")
                 vae_lora_scale = gr.Slider(0.5, 1.5, step=0.01, value=1.3, label="vae_lora_scale")
             with gr.Row():
-                # 修改 vae_skip_iter 为两个 Slider
                 vae_skip_iter_s1 = gr.Slider(0, 1, step=0.01, value=0.05, label="vae_skip_iter_before")
                 vae_skip_iter_s2 = gr.Slider(0, 1, step=0.01, value=0.8, label="vae_skip_iter_after")
             
@@ -567,68 +563,6 @@ with gr.Blocks() as demo:
         det_btns[i].click(det_seg_img, inputs=[images[i], captions[i]], outputs=[images[i]])
         vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
         accordion_states[i].change(fn=lambda x, state, index=i: change_accordion(x, index, state), inputs=[accordion_states[i], indexs_state], outputs=[accordions[i], indexs_state])
-    
-    examples = gr.Examples(
-        examples=[
-            [
-                "ENT1 wearing a tiny hat", 
-                42, 256, 768, 768,
-                3, 5,
-                0.85, 1.3,
-                0.05, 0.8,
-                "sample/hamster.jpg", None, None, None, None, None,
-                "a hamster", None, None, None, None, None,
-                False, False, False, False, False, False
-            ],
-            [
-                "ENT1 in a red dress is smiling", 
-                42, 256, 768, 768,
-                3, 5,
-                0.85, 1.3,
-                0.05, 0.8,
-                "sample/woman.jpg", None, None, None, None, None,
-                "a woman", None, None, None, None, None,
-                True, False, False, False, False, False
-            ],
-            [
-                "ENT1 and ENT2 standing together in a park.", 
-                42, 256, 768, 768,
-                2, 5,
-                0.85, 1.3,
-                0.05, 0.8,
-                "sample/woman.jpg", "sample/girl.jpg", None, None, None, None,
-                "a woman", "a girl", None, None, None, None,
-                True, True, False, False, False, False
-            ],
-            [
-                "ENT1, ENT2, and ENT3 standing together in a park.", 
-                42, 256, 768, 768,
-                2.5, 5,
-                0.8, 1.2,
-                0.05, 0.8,
-                "sample/woman.jpg", "sample/girl.jpg", "sample/old_man.jpg", None, None, None,
-                "a woman", "a girl", "an old man", None, None, None,
-                True, True, True, False, False, False
-            ],
-        ],
-        inputs=[
-            prompt, seed, 
-            cond_size,
-            target_height,
-            target_width,
-            weight_id,
-            weight_ip,
-            ip_scale_str,
-            vae_lora_scale,
-            vae_skip_iter_s1,
-            vae_skip_iter_s2,
-            *images,
-            *captions, 
-            *idip_checkboxes
-        ],
-        outputs=accordion_states,
-        fn=open_accordion_on_example_selection,
-        run_on_click=True
-    )
+
 
 demo.queue().launch(share=True)
