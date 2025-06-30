@@ -59,7 +59,8 @@ class FlorenceSAM:
         except:
             self.torch_dtype = torch.bfloat16
             
-        FLORENCE2_MODEL_ID = os.getenv('FLORENCE2_MODEL_PATH', "microsoft/Florence-2-large")
+        FLORENCE2_MODEL_ID = os.getenv('FLORENCE2_MODEL_PATH')
+        print(f'FLORENCE2_MODEL_ID is {FLORENCE2_MODEL_ID}')
         SAM2_CHECKPOINT = os.getenv('SAM2_MODEL_PATH')
         SAM2_CONFIG = "configs/sam2.1/sam2.1_hiera_l.yaml"
 
