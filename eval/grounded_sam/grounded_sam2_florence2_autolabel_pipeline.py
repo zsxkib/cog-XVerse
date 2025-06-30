@@ -64,11 +64,15 @@ class FlorenceSAM:
         SAM2_CONFIG = "configs/sam2.1/sam2.1_hiera_l.yaml"
 
         self.florence2_model = Florence2ForConditionalGeneration.from_pretrained(
-            FLORENCE2_MODEL_ID, trust_remote_code=True,
+            FLORENCE2_MODEL_ID, 
+            trust_remote_code=True,
+            local_files_only=True,
             torch_dtype=self.torch_dtype,
         ).eval().to(self.device)
         self.florence2_processor = Florence2Processor.from_pretrained(
-            FLORENCE2_MODEL_ID, trust_remote_code=True
+            FLORENCE2_MODEL_ID, 
+            trust_remote_code=True,
+            local_files_only=True,
         )
         sam2_model = build_sam2(SAM2_CONFIG, SAM2_CHECKPOINT, device=self.device)
         self.sam2_predictor = SAM2ImagePredictor(sam2_model)
