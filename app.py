@@ -13,13 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import spaces
-import tempfile
-from PIL import Image
-import subprocess
 
-import torch
 import torch.multiprocessing as mp
 mp.set_start_method('spawn', force=True)
+
+import tempfile
+from PIL import Image
+import torch
 import gradio as gr
 import string
 import random, time, math   
