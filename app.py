@@ -569,5 +569,4 @@ with gr.Blocks() as demo:
         run_on_click=True
     )
 
-port = int(os.environ.get("ARNOLD_WORKER_0_PORT", "-1").split(",")[3])
-demo.queue().launch(share=True, inbrowser=True, server_name="0.0.0.0", server_port=port)
+demo.queue().launch(share=True)
