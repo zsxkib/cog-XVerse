@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import spaces
 import tempfile
 from PIL import Image
 import subprocess
@@ -95,6 +95,7 @@ def crop_face_img(image):
     face = image.crop(face_bbox)
     return face
 
+@spaces.GPU()
 def vlm_img_caption(image):
     if isinstance(image, str):
         image = Image.open(image).convert("RGB")
@@ -150,6 +151,7 @@ def open_accordion_on_example_selection(*args):
     print(outputs)
     return outputs
 
+@spaces.GPU()
 def generate_image(
     prompt, 
     cond_size, target_height, target_width, 
