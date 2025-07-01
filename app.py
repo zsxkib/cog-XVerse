@@ -626,7 +626,7 @@ if __name__ == "__main__":
                             [
                                 "ENT1 and ENT2 standing together in a park.", 
                                 "sample/woman.jpg", "a woman",
-                                "sample/girl.jpg", "a girl",
+                                "sample/hamster.jpg", "a hamster",
                             ],
                         ],
                         inputs=[
