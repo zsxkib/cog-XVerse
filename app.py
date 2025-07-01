@@ -26,7 +26,8 @@ import gradio as gr
 import string
 import random, time, math   
 
-from src.flux.generate import generate_from_test_sample, seed_everything
+def load_stuff():
+    from src.flux.generate import generate_from_test_sample, seed_everything
 # from src.flux.pipeline_tools import CustomFluxPipeline, load_modulation_adapter, load_dit_lora
 # from src.utils.data_utils import get_train_config, image_grid, pil2tensor, json_dump, pad_to_square, cv2pil, merge_bboxes
 # from eval.tools.face_id import FaceID
@@ -396,6 +397,9 @@ def update_inputs(is_open, index, state: list):
     return indexs, is_open
 
 if __name__ == "__main__":
+
+    load_stuff()
+    
     with gr.Blocks() as demo:
     
         indexs_state = gr.State([0, 1])  # 添加状态来存储 indexs
