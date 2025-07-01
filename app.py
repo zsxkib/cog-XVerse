@@ -222,7 +222,7 @@ def generate_image(
 
     images = list(images_captions_faces[:num_inputs])
     captions = list(images_captions_faces[num_inputs:2 * num_inputs])
-    idips_checkboxes = list(images_captions_faces[2 * num_inputs:3 * num_inputs]
+    idips_checkboxes = list(images_captions_faces[2 * num_inputs:3 * num_inputs])
                             
     images = [images[i] for i in indices]
     captions = [captions[i] for i in indices]
