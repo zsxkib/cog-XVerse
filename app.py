@@ -21,7 +21,6 @@ import spaces
 
 import tempfile
 from PIL import Image
-import torch
 import gradio as gr
 import string
 import random, time, math   
@@ -40,6 +39,7 @@ from src.flux.generate import generate_from_test_sample, seed_everything
 # import yaml
 # import numpy as np
 # from huggingface_hub import snapshot_download, hf_hub_download
+import torch
 
 # # FLUX.1-dev
 # snapshot_download(
@@ -543,5 +543,5 @@ if __name__ == "__main__":
         vlm_btn_2.click(vlm_img_caption, inputs=[image_2], outputs=[caption_2])
     
     
-    
+    demo.queue()
     demo.launch(share=True)
