@@ -484,7 +484,12 @@ if __name__ == "__main__":
         indices_state = gr.State([0, 1])
 
         with gr.Column(elem_id="col-container"):
-            gr.Markdown("### XVerse Demo")
+            gr.Markdown(
+            """ # XVerse – Consistent Multi-Subject Control of Identity and Semantic Attributes via DiT Modulation
+    
+            • Source: [Github](https://github.com/bytedance/XVerse)  
+            • HF Space by : [@alexandernasa](https://twitter.com/alexandernasa/)  """
+            )
             with gr.Row():
                 with gr.Column():
                     with gr.Row():
