@@ -213,24 +213,13 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
     return pil_image.resize((new_W, new_H))
 
 
-                cond_size, 
-                target_height, 
-                target_width, 
-                seed,
-                vae_skip_iter, 
-                weight_id_ip_str,
-                double_attention, 
-                single_attention,
-                db_latent_lora_scale_str, 
-                sb_latent_lora_scale_str, 
-                vae_lora_scale_str,
-                session_state,
-
 @spaces.GPU()
 def generate_image(
     prompt,   
-    image_1, caption_1, use_id_1,
-    image_2, caption_2, use_id_2,
+    image_1, caption_1,
+    image_2, caption_2,
+    use_id_1 = True,
+    use_id_2 = True,
     cond_size = 256, 
     target_height = 768, 
     target_width = 768, 
@@ -626,23 +615,23 @@ if __name__ == "__main__":
                         examples=[
                             [
                                 "ENT1 wearing a tiny hat", 
-                                "sample/hamster.jpg", "a hamster", True,
+                                "sample/hamster.jpg", "a hamster",
                             ],
                             [
                                 "ENT1 in a red dress is smiling", 
-                                "sample/woman.jpg", "a woman", True,
-                                None, None, True,
+                                "sample/woman.jpg", "a woman",
+                                None, None,
                             ],
                             [
                                 "ENT1 and ENT2 standing together in a park.", 
-                                "sample/woman.jpg", "a woman", True,
-                                "sample/girl.jpg", "a girl", True,
+                                "sample/woman.jpg", "a woman",
+                                "sample/girl.jpg", "a girl",
                             ],
                         ],
                         inputs=[
                             prompt, 
-                            images[0], captions[0], idip_checkboxes[0],
-                            images[1], captions[1], idip_checkboxes[1],  
+                            images[0], captions[0],
+                            images[1], captions[1],  
                         ],
                         outputs=output,
                         fn=generate_image,
@@ -655,8 +644,10 @@ if __name__ == "__main__":
             generate_image, 
             inputs=[
                 prompt, 
-                images[0], captions[0], idip_checkboxes[0],
-                images[1], captions[1], idip_checkboxes[1],  
+                images[0], captions[0], 
+                images[1], captions[1], 
+                idip_checkboxes[0],
+                idip_checkboxes[1],  
                 cond_size, 
                 target_height, 
                 target_width, 
