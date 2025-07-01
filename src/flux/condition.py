@@ -20,18 +20,18 @@ from PIL import Image, ImageFilter
 import numpy as np
 import cv2
 
-from .pipeline_tools import encode_vae_images
+# from .pipeline_tools import encode_vae_images
 
-condition_dict = {
-    "depth": 0,
-    "canny": 1,
-    "subject": 4,
-    "coloring": 6,
-    "deblurring": 7,
-    "depth_pred": 8,
-    "fill": 9,
-    "sr": 10,
-}
+# condition_dict = {
+#     "depth": 0,
+#     "canny": 1,
+#     "subject": 4,
+#     "coloring": 6,
+#     "deblurring": 7,
+#     "depth_pred": 8,
+#     "fill": 9,
+#     "sr": 10,
+# }
 
 
 # class Condition(object):
