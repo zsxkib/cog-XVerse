@@ -261,7 +261,7 @@ def generate_image(
     use_words = []
     cur_run_time = time.strftime("%m%d-%H%M%S")
     tmp_dir_root = f"tmp/gradio_demo/{run_name}"
-    temp_dir = f"{tmp_dir_root}/{session_id}/{cur_run_time}_{generate_random_string(4)}"
+    temp_dir = f"{tmp_dir_root}/{cur_run_time}_{generate_random_string(4)}"
     os.makedirs(temp_dir, exist_ok=True)
     print(f"Temporary directory created: {temp_dir}")
     for i, (image_path, caption) in enumerate(zip(images, captions)):
