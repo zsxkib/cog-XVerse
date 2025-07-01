@@ -389,7 +389,7 @@ def create_min_image_input(index, open=True, indices_state=None):
 
     with gr.Column(min_width=256):
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
-            caption = gr.Textbox(label=f"ENT{index + 1}", value="")
+            caption = gr.Textbox(label=f"ENT{index + 1} Prompt", value="")
             face_btn = gr.Button("Crop Face")
             det_btn = gr.Button("Crop to Prompt")
             id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=False)
