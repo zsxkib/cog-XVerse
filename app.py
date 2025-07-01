@@ -215,13 +215,15 @@ def generate_image(
     latent_sblora_scale_str, vae_lora_scale,
     indices,
     session_id,
-    images,  
-    captions, 
-    idips_checkboxes,
+    *images_captions_faces,
 ):
     torch.cuda.empty_cache()
     num_images = 1
 
+    images = list(images_captions_faces[:num_inputs])
+    captions = list(images_captions_faces[num_inputs:2 * num_inputs])
+    idips_checkboxes = list(images_captions_faces[2 * num_inputs:3 * num_inputs]
+                            
     images = [images[i] for i in indices]
     captions = [captions[i] for i in indices]
     idips_checkboxes = [idips_checkboxes[i] for i in indices]
