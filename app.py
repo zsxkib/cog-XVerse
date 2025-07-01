@@ -39,12 +39,12 @@ import torch
 os.environ["XVERSE_PREPROCESSED_DATA"] = f"{os.getcwd()}/proprocess_data"
 
 
-# FLUX.1-schnell
-snapshot_download(
-    repo_id="black-forest-labs/FLUX.1-schnell",
-    local_dir="/data/checkpoints/FLUX.1-schnell",
-    local_dir_use_symlinks=False
-)
+# # FLUX.1-schnell
+# snapshot_download(
+#     repo_id="black-forest-labs/FLUX.1-schnell",
+#     local_dir="/data/checkpoints/FLUX.1-schnell",
+#     local_dir_use_symlinks=False
+# )
 
 
 # # FLUX.1-dev
@@ -603,7 +603,70 @@ if __name__ == "__main__":
             
                 with gr.Column():
                     output = gr.Image(label="Result")
-                    
+                        examples = gr.Examples(
+                    examples=[
+                        [
+                            "ENT1 wearing a tiny hat", 
+                            42, 256, 768, 768,
+                            3, 5,
+                            0.85, 1.3,
+                            0.05, 0.8,
+                            "sample/hamster.jpg", None, None, None, None, None,
+                            "a hamster", None, None, None, None, None,
+                            False, False, False, False, False, False
+                        ],
+                        [
+                            "ENT1 in a red dress is smiling", 
+                            42, 256, 768, 768,
+                            3, 5,
+                            0.85, 1.3,
+                            0.05, 0.8,
+                            "sample/woman.jpg", None, None, None, None, None,
+                            "a woman", None, None, None, None, None,
+                            True, False, False, False, False, False
+                        ],
+                        [
+                            "ENT1 and ENT2 standing together in a park.", 
+                            42, 256, 768, 768,
+                            2, 5,
+                            0.85, 1.3,
+                            0.05, 0.8,
+                            "sample/woman.jpg", "sample/girl.jpg", None, None, None, None,
+                            "a woman", "a girl", None, None, None, None,
+                            True, True, False, False, False, False
+                        ],
+                        [
+                            "ENT1, ENT2, and ENT3 standing together in a park.", 
+                            42, 256, 768, 768,
+                            2.5, 5,
+                            0.8, 1.2,
+                            0.05, 0.8,
+                            "sample/woman.jpg", "sample/girl.jpg", "sample/old_man.jpg", None, None, None,
+                            "a woman", "a girl", "an old man", None, None, None,
+                            True, True, True, False, False, False
+                        ],
+                    ],
+                    inputs=[
+                        prompt, seed, 
+                        cond_size,
+                        target_height,
+                        target_width,
+                        weight_id,
+                        weight_ip,
+                        ip_scale_str,
+                        vae_lora_scale,
+                        vae_skip_iter_s1,
+                        vae_skip_iter_s2,
+                        *images,
+                        *captions, 
+                        *idip_checkboxes
+                    ],
+                    outputs=accordion_states,
+                    fn=open_accordion_on_example_selection,
+                    cache_examples=True,
+                )
+            
+                                
                     
 
         gen_btn.click(
