@@ -39,12 +39,12 @@ import torch
 os.environ["XVERSE_PREPROCESSED_DATA"] = f"{os.getcwd()}/proprocess_data"
 
 
-# # FLUX.1-schnell
-# snapshot_download(
-#     repo_id="black-forest-labs/FLUX.1-schnell",
-#     local_dir="/data/checkpoints/FLUX.1-schnell",
-#     local_dir_use_symlinks=False
-# )
+# FLUX.1-schnell
+snapshot_download(
+    repo_id="black-forest-labs/FLUX.1-schnell",
+    local_dir="/data/checkpoints/FLUX.1-schnell",
+    local_dir_use_symlinks=False
+)
 
 
 # # FLUX.1-dev
@@ -54,46 +54,46 @@ os.environ["XVERSE_PREPROCESSED_DATA"] = f"{os.getcwd()}/proprocess_data"
 #     local_dir_use_symlinks=False
 # )
 
-# # Florence-2-large
-# snapshot_download(
-#     repo_id="microsoft/Florence-2-large",
-#     local_dir="/data/checkpoints/Florence-2-large",
-#     local_dir_use_symlinks=False
-# )
+# Florence-2-large
+snapshot_download(
+    repo_id="microsoft/Florence-2-large",
+    local_dir="/data/checkpoints/Florence-2-large",
+    local_dir_use_symlinks=False
+)
 
-# # CLIP ViT Large
-# snapshot_download(
-#     repo_id="openai/clip-vit-large-patch14",
-#     local_dir="/data/checkpoints/clip-vit-large-patch14",
-#     local_dir_use_symlinks=False
-# )
+# CLIP ViT Large
+snapshot_download(
+    repo_id="openai/clip-vit-large-patch14",
+    local_dir="/data/checkpoints/clip-vit-large-patch14",
+    local_dir_use_symlinks=False
+)
 
-# # DINO ViT-s16
-# snapshot_download(
-#     repo_id="facebook/dino-vits16",
-#     local_dir="/data/checkpoints/dino-vits16",
-#     local_dir_use_symlinks=False
-# )
+# DINO ViT-s16
+snapshot_download(
+    repo_id="facebook/dino-vits16",
+    local_dir="/data/checkpoints/dino-vits16",
+    local_dir_use_symlinks=False
+)
 
-# # mPLUG Visual Question Answering
-# snapshot_download(
-#     repo_id="xingjianleng/mplug_visual-question-answering_coco_large_en",
-#     local_dir="/data/checkpoints/mplug_visual-question-answering_coco_large_en",
-#     local_dir_use_symlinks=False
-# )
+# mPLUG Visual Question Answering
+snapshot_download(
+    repo_id="xingjianleng/mplug_visual-question-answering_coco_large_en",
+    local_dir="/data/checkpoints/mplug_visual-question-answering_coco_large_en",
+    local_dir_use_symlinks=False
+)
 
-# # XVerse
-# snapshot_download(
-#     repo_id="ByteDance/XVerse",
-#     local_dir="/data/checkpoints/XVerse",
-#     local_dir_use_symlinks=False
-# )
+# XVerse
+snapshot_download(
+    repo_id="ByteDance/XVerse",
+    local_dir="/data/checkpoints/XVerse",
+    local_dir_use_symlinks=False
+)
 
-# hf_hub_download(
-#     repo_id="facebook/sam2.1-hiera-large",
-#     local_dir="/data/checkpoints/",
-#     filename="sam2.1_hiera_large.pt",
-# )
+hf_hub_download(
+    repo_id="facebook/sam2.1-hiera-large",
+    local_dir="/data/checkpoints/",
+    filename="sam2.1_hiera_large.pt",
+)
 
 
 
