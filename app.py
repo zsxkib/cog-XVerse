@@ -125,6 +125,15 @@ run_name = time.strftime("%m%d-%H%M")
 
 num_inputs = 6
 
+images = []
+captions = []
+face_btns = []
+det_btns = []
+vlm_btns = []
+accordions = []
+idip_checkboxes = []
+accordion_states = []
+
 ckpt_root = "/data/checkpoints/XVerse"
 model.clear_modulation_adapters()
 model.pipe.unload_lora_weights()
@@ -538,9 +547,9 @@ if __name__ == "__main__":
                 double_attention, single_attention,
                 db_latent_lora_scale_str, sb_latent_lora_scale_str, vae_lora_scale_str,
                 indexs_state,  # 传递 indexs 状态
-                # *images,  
-                # *captions, 
-                # *idip_checkboxes,
+                *images,  
+                *captions, 
+                *idip_checkboxes,
             ], 
             outputs=output
         )
