@@ -29,16 +29,16 @@ from diffusers.models.transformers.transformer_flux import (
     unscale_lora_layers,
     logger,
 )
-from torchvision.transforms import ToPILImage
-from peft.tuners.tuners_utils import BaseTunerLayer
-from optimum.quanto import (
-    freeze, quantize, QTensor, qfloat8, qint8, qint4, qint2,
-)
-import re
-import safetensors
-from src.adapters.mod_adapters import CLIPModAdapter
-from peft import LoraConfig, set_peft_model_state_dict
-from transformers import CLIPProcessor, CLIPModel, CLIPVisionModelWithProjection, CLIPVisionModel
+# from torchvision.transforms import ToPILImage
+# from peft.tuners.tuners_utils import BaseTunerLayer
+# from optimum.quanto import (
+#     freeze, quantize, QTensor, qfloat8, qint8, qint4, qint2,
+# )
+# import re
+# import safetensors
+# from src.adapters.mod_adapters import CLIPModAdapter
+# from peft import LoraConfig, set_peft_model_state_dict
+# from transformers import CLIPProcessor, CLIPModel, CLIPVisionModelWithProjection, CLIPVisionModel
 
 
 # def encode_vae_images(pipeline: FluxPipeline, images: Tensor):
