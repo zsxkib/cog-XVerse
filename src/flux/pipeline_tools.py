@@ -31,9 +31,9 @@ from diffusers.models.transformers.transformer_flux import (
 )
 # from torchvision.transforms import ToPILImage
 # from peft.tuners.tuners_utils import BaseTunerLayer
-# from optimum.quanto import (
-#     freeze, quantize, QTensor, qfloat8, qint8, qint4, qint2,
-# )
+from optimum.quanto import (
+    freeze, quantize, QTensor, qfloat8, qint8, qint4, qint2,
+)
 # import re
 # import safetensors
 # from src.adapters.mod_adapters import CLIPModAdapter
