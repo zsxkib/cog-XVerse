@@ -23,10 +23,6 @@ import string
 import random, time, math   
 import os
 
-
-os.environ["NCCL_P2P_DISABLE"]="1"
-os.environ["NCCL_IB_DISABLE"]="1"
-
 import src.flux.generate
 from src.flux.generate import generate_from_test_sample, seed_everything
 from src.flux.pipeline_tools import CustomFluxPipeline, load_modulation_adapter, load_dit_lora
