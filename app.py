@@ -209,7 +209,7 @@ def generate_image(
     ip_scale,
     latent_sblora_scale_str, vae_lora_scale,
     indexs,  # 新增参数
-    # *images_captions_faces,  # Combine all unpacked arguments into one tuple
+    *images_captions_faces,  # Combine all unpacked arguments into one tuple
 ):
     torch.cuda.empty_cache()
     num_images = 1
@@ -349,6 +349,28 @@ def generate_image(
 
     return image
 
+def create_image_input(index, open=True, indexs_state=None):
+    accordion_state = gr.State(open)
+    with gr.Column():
+        with gr.Accordion(f"Input Image {index + 1}", open=accordion_state.value) as accordion:
+            image = gr.Image(type="filepath", label=f"Image {index + 1}")
+            caption = gr.Textbox(label=f"Caption {index + 1}", value="")
+            id_ip_checkbox = gr.Checkbox(value=False, label=f"ID or not {index + 1}", visible=True)
+            with gr.Row():
+                vlm_btn = gr.Button("Auto Caption")
+                det_btn = gr.Button("Det & Seg")
+                face_btn = gr.Button("Crop Face")
+            accordion.expand(
+                    inputs=[indexs_state],
+                    fn = lambda x: update_inputs(True, index, x), 
+                    outputs=[indexs_state, accordion_state],
+                )
+            accordion.collapse(
+                    inputs=[indexs_state],
+                    fn = lambda x: update_inputs(False, index, x), 
+                    outputs=[indexs_state, accordion_state],
+                )
+    return image, caption, face_btn, det_btn, vlm_btn, accordion_state, accordion, id_ip_checkbox
 
 
 def merge_instances(orig_img, indices, ins_bboxes, ins_images):
@@ -490,31 +512,24 @@ if __name__ == "__main__":
                         single_attention = gr.Checkbox(value=True, label="Single Attention", visible=False)            
     
                     clear_btn = gr.Button("清空输入图像")
-                with gr.Row():
-                    with gr.Column():
-                        image_1 = gr.Image(type="filepath", label=f"Image 1")
-                        caption_1 = gr.Textbox(label=f"Caption 1", value="")
-                        id_ip_checkbox_1 = gr.Checkbox(value=False, label=f"ID or not 1", visible=True)
-                        with gr.Row():
-                            vlm_btn_1 = gr.Button("Auto Caption")
-                            det_btn_1 = gr.Button("Det & Seg")
-                            face_btn_1 = gr.Button("Crop Face")
-    
-                    with gr.Column():
-                        image_2 = gr.Image(type="filepath", label=f"Image 2")
-                        caption_2 = gr.Textbox(label=f"Caption 2", value="")
-                        id_ip_checkbox_2 = gr.Checkbox(value=False, label=f"ID or not 2", visible=True)
-                        with gr.Row():
-                            vlm_btn_2 = gr.Button("Auto Caption")
-                            det_btn_2 = gr.Button("Det & Seg")
-                            face_btn_2 = gr.Button("Crop Face")
+                    with gr.Row():
+                        for i in range(num_inputs):
+                            image, caption, face_btn, det_btn, vlm_btn, accordion_state, accordion, id_ip_checkbox = create_image_input(i, open=i<2, indexs_state=indexs_state)
+                            images.append(image)
+                            idip_checkboxes.append(id_ip_checkbox)
+                            captions.append(caption)
+                            face_btns.append(face_btn)
+                            det_btns.append(det_btn)
+                            vlm_btns.append(vlm_btn)
+                            accordion_states.append(accordion_state)
+
+                            accordions.append(accordion)
         
             with gr.Column():
                 output = gr.Image(label="生成的图像")
                 seed = gr.Number(value=42, label="Seed", info="")
                 gen_btn = gr.Button("生成图像")
-    
-        gr.Markdown("### Examples")
+
         gen_btn.click(
             generate_image, 
             inputs=[
@@ -530,17 +545,17 @@ if __name__ == "__main__":
             outputs=output
         )
     
-        # # 修改清空函数的输出参数
-        # clear_btn.click(clear_images, outputs=images)
+
+        # 修改清空函数的输出参数
+        clear_btn.click(clear_images, outputs=images)
     
-        face_btn_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
-        det_btn_1.click(det_seg_img, inputs=[image_1, caption_1], outputs=[image_1])
-        vlm_btn_1.click(vlm_img_caption, inputs=[image_1], outputs=[caption_1])
-    
-        face_btn_2.click(crop_face_img, inputs=[image_2], outputs=[image_2])
-        det_btn_2.click(det_seg_img, inputs=[image_2, caption_2], outputs=[image_2])
-        vlm_btn_2.click(vlm_img_caption, inputs=[image_2], outputs=[caption_2])
-    
+        # 循环绑定 Det & Seg 和 Auto Caption 按钮的点击事件
+        for i in range(num_inputs):
+            face_btns[i].click(crop_face_img, inputs=[images[i]], outputs=[images[i]])
+            det_btns[i].click(det_seg_img, inputs=[images[i], captions[i]], outputs=[images[i]])
+            vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
+            accordion_states[i].change(fn=lambda x, state, index=i: change_accordion(x, index, state), inputs=[accordion_states[i], indexs_state], outputs=[accordions[i], indexs_state])
+        
     
     demo.queue()
     demo.launch()
