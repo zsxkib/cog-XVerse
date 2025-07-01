@@ -21,12 +21,12 @@ from typing import List, Union, Optional, Dict, Any, Callable
 from src.flux.transformer import tranformer_forward
 from src.flux.condition import Condition
 
-from diffusers.pipelines.flux.pipeline_flux import (
-    FluxPipelineOutput,
-    calculate_shift,
-    retrieve_timesteps,
-    np,
-)
+# from diffusers.pipelines.flux.pipeline_flux import (
+#     FluxPipelineOutput,
+#     calculate_shift,
+#     retrieve_timesteps,
+#     np,
+# )
 from src.flux.pipeline_tools import (
     encode_prompt_with_clip_t5, tokenize_t5_prompt, clear_attn_maps, encode_vae_images
 )
