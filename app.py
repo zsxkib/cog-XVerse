@@ -258,7 +258,8 @@ def generate_image(
     src_inputs = []
     use_words = []
     cur_run_time = time.strftime("%m%d-%H%M%S")
-    tmp_dir_root = f"{os.environ["XVERSE_PREPROCESSED_DATA"]}"
+    processed_directory = os.environ["XVERSE_PREPROCESSED_DATA"]
+    tmp_dir_root = f'{processed_directory}'
     temp_dir = f"{tmp_dir_root}/{session_id}/{cur_run_time}_{generate_random_string(4)}"
     os.makedirs(temp_dir, exist_ok=True)
     print(f"Temporary directory created: {temp_dir}")
