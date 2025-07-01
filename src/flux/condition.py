@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import multiprocessing as mp
+mp.set_start_method("spawn", force=True)
+
 import torch
 from typing import Optional, Union, List, Tuple
 from diffusers.pipelines import FluxPipeline
