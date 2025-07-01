@@ -670,7 +670,7 @@ if __name__ == "__main__":
             face_btns[i].click(crop_face_img, inputs=[images[i]], outputs=[images[i]])
             det_btns[i].click(det_seg_img, inputs=[images[i], captions[i]], outputs=[images[i]])
             vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
-            images[i].upload(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
+            # images[i].upload(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
 
     demo.unload(cleanup)
     demo.queue()
