@@ -127,9 +127,8 @@ captions = []
 face_btns = []
 det_btns = []
 vlm_btns = []
-accordions = []
+
 idip_checkboxes = []
-accordion_states = []
 
 ckpt_root = "/data/checkpoints/XVerse"
 model.clear_modulation_adapters()
@@ -359,7 +358,7 @@ def create_image_input(index, open=True, indices_state=None):
     with gr.Column():
         with gr.Accordion(f"Input Image {index + 1}", open=accordion_state.value) as accordion:
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
-            caption = gr.Textbox(label=f"Caption {index + 1}", value="")
+            caption = gr.Textbox(label=f"ENT{index + 1}", value="")
             id_ip_checkbox = gr.Checkbox(value=False, label=f"ID or not {index + 1}", visible=True)
             with gr.Row():
                 vlm_btn = gr.Button("Generate Caption")
@@ -376,6 +375,19 @@ def create_image_input(index, open=True, indices_state=None):
                     outputs=[indices_state, accordion_state],
                 )
     return image, caption, face_btn, det_btn, vlm_btn, accordion_state, accordion, id_ip_checkbox
+
+def create_min_image_input(index, open=True, indices_state=None):
+
+    with gr.Column(min_width=256):
+            image = gr.Image(type="filepath", label=f"Image {index + 1}")
+            caption = gr.Textbox(label=f"Caption {index + 1}", value="")
+            id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=True)
+            with gr.Row():
+                vlm_btn = gr.Button("Generate Caption", visible=False)
+                det_btn = gr.Button("Det & Seg", visible=False)
+                face_btn = gr.Button("Crop Face", visible=False)
+                
+    return image, caption, face_btn, det_btn, vlm_btn, id_ip_checkbox
 
 
 def merge_instances(orig_img, indices, ins_bboxes, ins_images):
@@ -460,20 +472,19 @@ if __name__ == "__main__":
                 with gr.Column():
                     with gr.Row():
                         for i in range(num_inputs):
-                            image, caption, face_btn, det_btn, vlm_btn, accordion_state, accordion, id_ip_checkbox = create_image_input(i, open=i<2, indices_state=indices_state)
+                            image, caption, face_btn, det_btn, vlm_btn, id_ip_checkbox = create_min_image_input(i, open=i<2, indices_state=indices_state)
                             images.append(image)
                             idip_checkboxes.append(id_ip_checkbox)
                             captions.append(caption)
                             face_btns.append(face_btn)
                             det_btns.append(det_btn)
                             vlm_btns.append(vlm_btn)
-                            accordion_states.append(accordion_state)
-    
-                            accordions.append(accordion)
                                 
                     prompt = gr.Textbox(label="Prompt", value="")
                     gen_btn = gr.Button("Generate", variant="primary")
-                    with gr.Accordion("Advanced Settings", open=False):
+                    with gr.Accordion("Advanced Settings", open=False, visible=False):
+
+                        seed = gr.Number(value=42, label="Seed", info="")
                         
                         with gr.Row():
                             target_height = gr.Slider(512, 1024, step=128, value=768, label="Generated Height", info="")
@@ -559,7 +570,7 @@ if __name__ == "__main__":
             
                 with gr.Column():
                     output = gr.Image(label="Result")
-                    seed = gr.Number(value=42, label="Seed", info="")
+                    
                     
 
         gen_btn.click(
@@ -583,8 +594,7 @@ if __name__ == "__main__":
             face_btns[i].click(crop_face_img, inputs=[images[i]], outputs=[images[i]])
             det_btns[i].click(det_seg_img, inputs=[images[i], captions[i]], outputs=[images[i]])
             vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
-            accordion_states[i].change(fn=lambda x, state, index=i: change_accordion(x, index, state), inputs=[accordion_states[i], indices_state], outputs=[accordions[i], indices_state])
-
+            images[i].upload(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
     
     demo.queue()
     demo.launch()
