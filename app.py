@@ -509,7 +509,7 @@ with gr.Blocks() as demo:
                 with gr.Column():
                     image_1 = gr.Image(type="filepath", label=f"Image {index + 1}")
                     caption_1 = gr.Textbox(label=f"Caption {index + 1}", value="")
-                    id_ip_checkbox_1 = gr.Checkbox(value=False, label=f"ID or not {index + 1}", visible=True)
+                    id_ip_checkbox_1 = gr.Checkbox(value=False, label=f"ID or not 1", visible=True)
                     with gr.Row():
                         vlm_btn_1 = gr.Button("Auto Caption")
                         det_btn_1 = gr.Button("Det & Seg")
@@ -518,7 +518,7 @@ with gr.Blocks() as demo:
                 with gr.Column():
                     image_2 = gr.Image(type="filepath", label=f"Image {index + 1}")
                     caption_2 = gr.Textbox(label=f"Caption {index + 1}", value="")
-                    id_ip_checkbox_2 = gr.Checkbox(value=False, label=f"ID or not {index + 1}", visible=True)
+                    id_ip_checkbox_2 = gr.Checkbox(value=False, label=f"ID or not 2", visible=True)
                     with gr.Row():
                         vlm_btn_2 = gr.Button("Auto Caption")
                         det_btn_2 = gr.Button("Det & Seg")
