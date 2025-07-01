@@ -199,7 +199,7 @@ def generate_image(
     ip_scale,
     latent_sblora_scale_str, vae_lora_scale,
     indexs,  # 新增参数
-    *images_captions_faces,  # Combine all unpacked arguments into one tuple
+    # *images_captions_faces,  # Combine all unpacked arguments into one tuple
 ):
     # torch.cuda.empty_cache()
     # num_images = 1
@@ -513,9 +513,9 @@ with gr.Blocks() as demo:
             double_attention, single_attention,
             db_latent_lora_scale_str, sb_latent_lora_scale_str, vae_lora_scale_str,
             indexs_state,  # 传递 indexs 状态
-            *images,  
-            *captions, 
-            *idip_checkboxes,
+            # *images,  
+            # *captions, 
+            # *idip_checkboxes,
         ], 
         outputs=output
     )
