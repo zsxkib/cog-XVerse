@@ -22,7 +22,7 @@ import gradio as gr
 import string
 import random, time, math   
 import os
-
+import uuid
 import src.flux.generate
 from src.flux.generate import generate_from_test_sample, seed_everything
 from src.flux.pipeline_tools import CustomFluxPipeline, load_modulation_adapter, load_dit_lora
@@ -213,24 +213,41 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
     return pil_image.resize((new_W, new_H))
 
 
+                cond_size, 
+                target_height, 
+                target_width, 
+                seed,
+                vae_skip_iter, 
+                weight_id_ip_str,
+                double_attention, 
+                single_attention,
+                db_latent_lora_scale_str, 
+                sb_latent_lora_scale_str, 
+                vae_lora_scale_str,
+                session_state,
+
 @spaces.GPU()
 def generate_image(
     prompt,   
     image_1, caption_1, use_id_1,
     image_2, caption_2, use_id_2,
-    cond_size, 
-    target_height, 
-    target_width, 
-    seed, 
-    vae_skip_iter, 
-    control_weight_lambda,
-    double_attention,
-    single_attention,
-    ip_scale,
-    latent_sblora_scale_str, 
-    vae_lora_scale,
-    session_id,
+    cond_size = 256, 
+    target_height = 768, 
+    target_width = 768, 
+    seed = 42, 
+    vae_skip_iter = "0-0.05:1,0.8-1:1", 
+    control_weight_lambda = "0-1:1/3/5",
+    double_attention = False,
+    single_attention = True,
+    ip_scale = "0-1:0.85",
+    latent_sblora_scale_str = "0-1:0.85", 
+    vae_lora_scale = "0-1:1.3",
+    session_id = None,
 ):
+
+    if session_id is None:
+        session_id = uuid.uuid4().hex
+    
     torch.cuda.empty_cache()
     num_images = 1
 
@@ -392,11 +409,12 @@ def create_min_image_input(index, open=True, indices_state=None):
     with gr.Column(min_width=256):
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
             caption = gr.Textbox(label=f"ENT{index + 1}", value="")
+            face_btn = gr.Button("Crop Face")
             id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=False)
             with gr.Row():
                 vlm_btn = gr.Button("Generate Caption", visible=False)
                 det_btn = gr.Button("Det & Seg", visible=False)
-                face_btn = gr.Button("Crop Face", visible=False)
+                
                 
     return image, caption, face_btn, det_btn, vlm_btn, id_ip_checkbox
 
@@ -604,69 +622,32 @@ if __name__ == "__main__":
                 with gr.Column():
                     output = gr.Image(label="Result")
                     
-                    # examples = gr.Examples(
-                    #     examples=[
-                    #         [
-                    #             "ENT1 wearing a tiny hat", 
-                    #             42, 256, 768, 768,
-                    #             3, 5,
-                    #             0.85, 1.3,
-                    #             0.05, 0.8,
-                    #             "sample/hamster.jpg", None, None, None, None, None,
-                    #             "a hamster", None, None, None, None, None,
-                    #             False, False, False, False, False, False
-                    #         ],
-                    #         [
-                    #             "ENT1 in a red dress is smiling", 
-                    #             42, 256, 768, 768,
-                    #             3, 5,
-                    #             0.85, 1.3,
-                    #             0.05, 0.8,
-                    #             "sample/woman.jpg", None, None, None, None, None,
-                    #             "a woman", None, None, None, None, None,
-                    #             True, False, False, False, False, False
-                    #         ],
-                    #         [
-                    #             "ENT1 and ENT2 standing together in a park.", 
-                    #             42, 256, 768, 768,
-                    #             2, 5,
-                    #             0.85, 1.3,
-                    #             0.05, 0.8,
-                    #             "sample/woman.jpg", "sample/girl.jpg", None, None, None, None,
-                    #             "a woman", "a girl", None, None, None, None,
-                    #             True, True, False, False, False, False
-                    #         ],
-                    #         [
-                    #             "ENT1, ENT2, and ENT3 standing together in a park.", 
-                    #             42, 256, 768, 768,
-                    #             2.5, 5,
-                    #             0.8, 1.2,
-                    #             0.05, 0.8,
-                    #             "sample/woman.jpg", "sample/girl.jpg", "sample/old_man.jpg", None, None, None,
-                    #             "a woman", "a girl", "an old man", None, None, None,
-                    #             True, True, True, False, False, False
-                    #         ],
-                    #     ],
-                    #     inputs=[
-                    #         prompt, 
-                    #         seed, 
-                    #         cond_size,
-                    #         target_height,
-                    #         target_width,
-                    #         weight_id,
-                    #         weight_ip,
-                    #         ip_scale_str,
-                    #         vae_lora_scale,
-                    #         vae_skip_iter_s1,
-                    #         vae_skip_iter_s2,
-                    #         *images,
-                    #         *captions, 
-                    #         *idip_checkboxes
-                    #     ],
-                    #     outputs=output,
-                    #     fn=generate_image,
-                    #     cache_examples=True,
-                    # )
+                    examples = gr.Examples(
+                        examples=[
+                            [
+                                "ENT1 wearing a tiny hat", 
+                                "sample/hamster.jpg", "a hamster", True,
+                            ],
+                            [
+                                "ENT1 in a red dress is smiling", 
+                                "sample/woman.jpg", "a woman", True,
+                                None, None, True,
+                            ],
+                            [
+                                "ENT1 and ENT2 standing together in a park.", 
+                                "sample/woman.jpg", "a woman", True,
+                                "sample/girl.jpg", "a girl", True,
+                            ],
+                        ],
+                        inputs=[
+                            prompt, 
+                            images[0], captions[0], idip_checkboxes[0],
+                            images[1], captions[1], idip_checkboxes[1],  
+                        ],
+                        outputs=output,
+                        fn=generate_image,
+                        cache_examples=True,
+                    )
 
                     
         
