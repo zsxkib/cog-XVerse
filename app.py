@@ -507,8 +507,8 @@ with gr.Blocks() as demo:
                 clear_btn = gr.Button("清空输入图像")
             with gr.Row():
                 with gr.Column():
-                    image_1 = gr.Image(type="filepath", label=f"Image {index + 1}")
-                    caption_1 = gr.Textbox(label=f"Caption {index + 1}", value="")
+                    image_1 = gr.Image(type="filepath", label=f"Image 1")
+                    caption_1 = gr.Textbox(label=f"Caption 1", value="")
                     id_ip_checkbox_1 = gr.Checkbox(value=False, label=f"ID or not 1", visible=True)
                     with gr.Row():
                         vlm_btn_1 = gr.Button("Auto Caption")
@@ -516,8 +516,8 @@ with gr.Blocks() as demo:
                         face_btn_1 = gr.Button("Crop Face")
 
                 with gr.Column():
-                    image_2 = gr.Image(type="filepath", label=f"Image {index + 1}")
-                    caption_2 = gr.Textbox(label=f"Caption {index + 1}", value="")
+                    image_2 = gr.Image(type="filepath", label=f"Image 2")
+                    caption_2 = gr.Textbox(label=f"Caption 2", value="")
                     id_ip_checkbox_2 = gr.Checkbox(value=False, label=f"ID or not 2", visible=True)
                     with gr.Row():
                         vlm_btn_2 = gr.Button("Auto Caption")
