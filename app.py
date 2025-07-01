@@ -525,7 +525,7 @@ if __name__ == "__main__":
                             target_width = gr.Slider(512, 1024, step=128, value=768, label="Generated Width", info="")
                             cond_size = gr.Slider(256, 384, step=128, value=256, label="Condition Size", info="")
                         with gr.Row():
-                            weight_id = gr.Slider(0.1, 5, step=0.1, value=3, label="weight_id")
+                            weight_id = gr.Slider(0.1, 5, step=0.1, value=3.5, label="weight_id")
                             weight_ip = gr.Slider(0.1, 5, step=0.1, value=5, label="weight_ip")
                         with gr.Row():
                             ip_scale_str = gr.Slider(0.5, 1.5, step=0.01, value=0.85, label="latent_lora_scale")
