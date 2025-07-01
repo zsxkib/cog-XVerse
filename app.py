@@ -45,60 +45,60 @@ import torch
 # FLUX.1-dev
 snapshot_download(
     repo_id="black-forest-labs/FLUX.1-dev",
-    local_dir="./checkpoints/FLUX.1-dev",
+    local_dir="/data/checkpoints/FLUX.1-dev",
     local_dir_use_symlinks=False
 )
 
 # Florence-2-large
 snapshot_download(
     repo_id="microsoft/Florence-2-large",
-    local_dir="./checkpoints/Florence-2-large",
+    local_dir="/data/checkpoints/Florence-2-large",
     local_dir_use_symlinks=False
 )
 
 # CLIP ViT Large
 snapshot_download(
     repo_id="openai/clip-vit-large-patch14",
-    local_dir="./checkpoints/clip-vit-large-patch14",
+    local_dir="/data/checkpoints/clip-vit-large-patch14",
     local_dir_use_symlinks=False
 )
 
 # DINO ViT-s16
 snapshot_download(
     repo_id="facebook/dino-vits16",
-    local_dir="./checkpoints/dino-vits16",
+    local_dir="/data/checkpoints/dino-vits16",
     local_dir_use_symlinks=False
 )
 
 # mPLUG Visual Question Answering
 snapshot_download(
     repo_id="xingjianleng/mplug_visual-question-answering_coco_large_en",
-    local_dir="./checkpoints/mplug_visual-question-answering_coco_large_en",
+    local_dir="/data/checkpoints/mplug_visual-question-answering_coco_large_en",
     local_dir_use_symlinks=False
 )
 
 # XVerse
 snapshot_download(
     repo_id="ByteDance/XVerse",
-    local_dir="./checkpoints/XVerse",
+    local_dir="/data/checkpoints/XVerse",
     local_dir_use_symlinks=False
 )
 
 hf_hub_download(
     repo_id="facebook/sam2.1-hiera-large",
-    local_dir="./checkpoints/",
+    local_dir="/data/checkpoints/",
     filename="sam2.1_hiera_large.pt",
 )
 
 
 
-os.environ["FLORENCE2_MODEL_PATH"]    = "./checkpoints/Florence-2-large"
-os.environ["SAM2_MODEL_PATH"]         = "./checkpoints/sam2.1_hiera_large.pt"
-os.environ["FACE_ID_MODEL_PATH"]      = "./checkpoints/model_ir_se50.pth"
-os.environ["CLIP_MODEL_PATH"]         = "./checkpoints/clip-vit-large-patch14"
-os.environ["FLUX_MODEL_PATH"]         = "./checkpoints/FLUX.1-dev"
-os.environ["DPG_VQA_MODEL_PATH"]      = "./checkpoints/mplug_visual-question-answering_coco_large_en"
-os.environ["DINO_MODEL_PATH"]         = "./checkpoints/dino-vits16"
+os.environ["FLORENCE2_MODEL_PATH"]    = "/data/checkpoints/Florence-2-large"
+os.environ["SAM2_MODEL_PATH"]         = "/data/checkpoints/sam2.1_hiera_large.pt"
+os.environ["FACE_ID_MODEL_PATH"]      = "/data/checkpoints/model_ir_se50.pth"
+os.environ["CLIP_MODEL_PATH"]         = "/data/checkpoints/clip-vit-large-patch14"
+os.environ["FLUX_MODEL_PATH"]         = "/data/checkpoints/FLUX.1-dev"
+os.environ["DPG_VQA_MODEL_PATH"]      = "/data/checkpoints/mplug_visual-question-answering_coco_large_en"
+os.environ["DINO_MODEL_PATH"]         = "/data/checkpoints/dino-vits16"
 
 dtype = torch.bfloat16
 device = "cuda"
@@ -531,7 +531,7 @@ if __name__ == "__main__":
         )
     
         # # 修改清空函数的输出参数
-        clear_btn.click(clear_images, outputs=images)
+        # clear_btn.click(clear_images, outputs=images)
     
         face_btn_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
         det_btn_1.click(det_seg_img, inputs=[image_1, caption_1], outputs=[image_1])
