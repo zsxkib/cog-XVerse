@@ -549,12 +549,12 @@ with gr.Blocks() as demo:
     clear_btn.click(clear_images, outputs=images)
 
     face_btn_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
-    det_btn_1.click(det_seg_img, inputs=[images_1, captions_1], outputs=[images_1])
-    vlm_btn_1.click(vlm_img_caption, inputs=[images_1], outputs=[captions_1])
+    det_btn_1.click(det_seg_img, inputs=[image_1, caption_1], outputs=[image_1])
+    vlm_btn_1.click(vlm_img_caption, inputs=[image_1], outputs=[caption_1])
 
     face_btn_2.click(crop_face_img, inputs=[image_2], outputs=[image_2])
-    det_btn_2.click(det_seg_img, inputs=[images_2, captions_2], outputs=[images_2])
-    vlm_btn_2.click(vlm_img_caption, inputs=[images_2], outputs=[captions_2])
+    det_btn_2.click(det_seg_img, inputs=[image_2, caption_2], outputs=[image_2])
+    vlm_btn_2.click(vlm_img_caption, inputs=[image_2], outputs=[caption_2])
 
 
 demo.queue().launch(share=True)
