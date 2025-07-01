@@ -624,7 +624,7 @@ if __name__ == "__main__":
                                 None, None,
                             ],
                             [
-                                "ENT1 and ENT2 standing together in a park.", 
+                                "ENT1 holding ENT2 in a park.", 
                                 "sample/woman.jpg", "a woman",
                                 "sample/hamster.jpg", "a hamster",
                             ],
