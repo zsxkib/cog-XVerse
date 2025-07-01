@@ -544,4 +544,4 @@ if __name__ == "__main__":
     
     
     demo.queue()
-    demo.launch(share=True)
+    demo.launch()
