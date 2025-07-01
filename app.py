@@ -548,13 +548,13 @@ with gr.Blocks() as demo:
     # 修改清空函数的输出参数
     clear_btn.click(clear_images, outputs=images)
 
-    face_btns_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
-    det_btns_1.click(det_seg_img, inputs=[images_1, captions_1], outputs=[images_1])
-    vlm_btns_1.click(vlm_img_caption, inputs=[images_1], outputs=[captions_1])
+    face_btn_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
+    det_btn_1.click(det_seg_img, inputs=[images_1, captions_1], outputs=[images_1])
+    vlm_btn_1.click(vlm_img_caption, inputs=[images_1], outputs=[captions_1])
 
-    face_btns_2.click(crop_face_img, inputs=[image_2], outputs=[image_2])
-    det_btns_2.click(det_seg_img, inputs=[images_2, captions_2], outputs=[images_2])
-    vlm_btns_2.click(vlm_img_caption, inputs=[images_2], outputs=[captions_2])
+    face_btn_2.click(crop_face_img, inputs=[image_2], outputs=[image_2])
+    det_btn_2.click(det_seg_img, inputs=[images_2, captions_2], outputs=[images_2])
+    vlm_btn_2.click(vlm_img_caption, inputs=[images_2], outputs=[captions_2])
 
 
 demo.queue().launch(share=True)
