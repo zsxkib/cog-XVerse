@@ -23,7 +23,9 @@ import string
 import random, time, math   
 import os
 
-os.environ["XVERSE_OUTPUT_DATA"] = f"{os.getcwd()}/output_results"
+
+os.environ["NCCL_P2P_DISABLE"]="1"
+os.environ["NCCL_IB_DISABLE"]="1"
 
 import src.flux.generate
 from src.flux.generate import generate_from_test_sample, seed_everything
@@ -116,6 +118,7 @@ model.config = config
 
 run_mode = "mod_only"
 store_attn_map = False
+run_name = time.strftime("%m%d-%H%M")
 
 num_inputs = 2
 
@@ -254,10 +257,10 @@ def generate_image(
 
     src_inputs = []
     use_words = []
-    
-    temp_dir = os.path.join(os.environ["XVERSE_OUTPUT_DATA"], session_id)
-    os.makedirs(base_dir, exist_ok=True)
-    
+    cur_run_time = time.strftime("%m%d-%H%M%S")
+    tmp_dir_root = f"tmp/gradio_demo/{run_name}"
+    temp_dir = f"{tmp_dir_root}/{session_id}/{cur_run_time}_{generate_random_string(4)}"
+    os.makedirs(temp_dir, exist_ok=True)
     print(f"Temporary directory created: {temp_dir}")
     for i, (image_path, caption) in enumerate(zip(images, captions)):
         if image_path:
@@ -270,7 +273,7 @@ def generate_image(
                 prompt = prompt.replace(f"ENT{i+1}", caption)
             
             image = resize_keep_aspect_ratio(Image.open(image_path), 768)
-            save_path = f"{temp_dir}/tmp_resized_input_{i}.png"
+            save_path = f"{temp_dir}/{session_id}/tmp_resized_input_{i}.png"
             image.save(save_path)
             
             input_image_path = save_path
@@ -308,7 +311,7 @@ def generate_image(
             ),
         ]
     
-    json_dump(test_sample, f"{temp_dir}/test_sample.json", 'utf-8')
+    json_dump(test_sample, f"{temp_dir}/{session_id}/test_sample.json", 'utf-8')
     assert single_attention == True
     target_size = int(round((target_width * target_height) ** 0.5) // 16 * 16)
     print(test_sample)
@@ -434,25 +437,6 @@ def start_session(request: gr.Request):
         str: Unique session hash identifier
     """
     return request.session_hash
-
-
-# Cleanup on unload
-def cleanup(request: gr.Request):
-    """
-    Clean up session-specific directories and temporary files when the user session ends.
-    
-    This function is triggered when the Gradio demo is unloaded (e.g., when the user
-    closes the browser tab or navigates away). It removes all temporary files and
-    directories created during the user's session to free up storage space.
-    
-    Args:
-        request (gr.Request): Gradio request object containing session information
-    """
-    sid = request.session_hash
-    if sid:
-        d1 = os.path.join(os.environ["XVERSE_OUTPUT_DATA"], sid)
-        shutil.rmtree(d1, ignore_errors=True)
-        
 
 css = """
 #col-container {
@@ -599,7 +583,6 @@ if __name__ == "__main__":
             vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
             accordion_states[i].change(fn=lambda x, state, index=i: change_accordion(x, index, state), inputs=[accordion_states[i], indices_state], outputs=[accordions[i], indices_state])
 
-        demo.unload(cleanup)
     
     demo.queue()
     demo.launch()
