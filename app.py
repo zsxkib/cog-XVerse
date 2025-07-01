@@ -390,8 +390,8 @@ def create_min_image_input(index, open=True, indices_state=None):
     with gr.Column(min_width=256):
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
             caption = gr.Textbox(label=f"ENT{index + 1} Prompt", value="")
-            face_btn = gr.Button("Crop Face")
             det_btn = gr.Button("Crop to Prompt")
+            face_btn = gr.Button("Crop to Face")
             id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=False)
             with gr.Row():
                 vlm_btn = gr.Button("Generate Caption", visible=False)
@@ -514,7 +514,7 @@ if __name__ == "__main__":
                                 
                     prompt = gr.Textbox(label="Prompt", placeholder="e.g., ENT1 and ENT2")
                     gen_btn = gr.Button("Generate", variant="primary")
-                    with gr.Accordion("Advanced Settings", open=False, visible=False):
+                    with gr.Accordion("Advanced Settings", open=False):
 
                         seed = gr.Number(value=42, label="Seed", info="")
                         
