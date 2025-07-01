@@ -215,9 +215,9 @@ def generate_image(
     latent_sblora_scale_str, vae_lora_scale,
     indices,
     session_id,
-    *images,  
-    *captions, 
-    *idips_checkboxes,
+    images,  
+    captions, 
+    idips_checkboxes,
 ):
     torch.cuda.empty_cache()
     num_images = 1
