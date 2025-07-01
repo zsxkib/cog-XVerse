@@ -25,6 +25,11 @@ import torch
 import gradio as gr
 import string
 import random, time, math   
+import os
+
+
+os.environ["NCCL_P2P_DISABLE"]="1"
+os.environ["NCCL_IB_DISABLE"]="1"
 
 from src.flux.generate import generate_from_test_sample, seed_everything
 # from src.flux.pipeline_tools import CustomFluxPipeline, load_modulation_adapter, load_dit_lora
@@ -35,7 +40,6 @@ from src.flux.generate import generate_from_test_sample, seed_everything
 # import yaml
 # import numpy as np
 # from huggingface_hub import snapshot_download, hf_hub_download
-# import os
 
 # # FLUX.1-dev
 # snapshot_download(
