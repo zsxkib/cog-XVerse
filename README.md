@@ -1,7 +1,7 @@
 ---
 title: XVerse
 emoji: 🖼️
-colorFrom: gray
+colorFrom: indigo
 colorTo: indigo
 sdk: gradio
 sdk_version: 5.35.0
