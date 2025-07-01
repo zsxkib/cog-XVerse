@@ -132,10 +132,11 @@ if config["model"]["use_dit_lora"]:
 vae_skip_iter = None
 attn_skip_iter = 0
 
-# 定义清空图像的函数，只返回四个 None
+
 def clear_images():
     return [None, ]*num_inputs
 
+@spaces.GPU()
 def det_seg_img(image, label):
     if isinstance(image, str):
         image = Image.open(image).convert("RGB")
@@ -144,6 +145,7 @@ def det_seg_img(image, label):
     ins, bbox = merge_instances(image, indices, instance_result_dict["instance_bboxes"], instance_result_dict["instance_images"])
     return ins
 
+@spaces.GPU()
 def crop_face_img(image):
     if isinstance(image, str):
         image = Image.open(image).convert("RGB")
