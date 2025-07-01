@@ -125,7 +125,7 @@ run_name = time.strftime("%m%d-%H%M")
 
 num_inputs = 6
 
-ckpt_root = "./checkpoints/XVerse"
+ckpt_root = "/data/checkpoints/XVerse"
 model.clear_modulation_adapters()
 model.pipe.unload_lora_weights()
 if not os.path.exists(ckpt_root):
