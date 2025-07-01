@@ -14,127 +14,124 @@
 # limitations under the License.
 import spaces
 
-import torch.multiprocessing as mp
-mp.set_start_method('spawn', force=True)
-
 import tempfile
 from PIL import Image
 import torch
 import gradio as gr
-import string
-import random, time, math   
+# import string
+# import random, time, math   
 
-from src.flux.generate import generate_from_test_sample, seed_everything
-from src.flux.pipeline_tools import CustomFluxPipeline, load_modulation_adapter, load_dit_lora
-from src.utils.data_utils import get_train_config, image_grid, pil2tensor, json_dump, pad_to_square, cv2pil, merge_bboxes
-from eval.tools.face_id import FaceID
-from eval.tools.florence_sam import ObjectDetector
-import shutil
-import yaml
-import numpy as np
-from huggingface_hub import snapshot_download, hf_hub_download
-import os
+# from src.flux.generate import generate_from_test_sample, seed_everything
+# from src.flux.pipeline_tools import CustomFluxPipeline, load_modulation_adapter, load_dit_lora
+# from src.utils.data_utils import get_train_config, image_grid, pil2tensor, json_dump, pad_to_square, cv2pil, merge_bboxes
+# from eval.tools.face_id import FaceID
+# from eval.tools.florence_sam import ObjectDetector
+# import shutil
+# import yaml
+# import numpy as np
+# from huggingface_hub import snapshot_download, hf_hub_download
+# import os
 
-# FLUX.1-dev
-snapshot_download(
-    repo_id="black-forest-labs/FLUX.1-dev",
-    local_dir="./checkpoints/FLUX.1-dev",
-    local_dir_use_symlinks=False
-)
+# # FLUX.1-dev
+# snapshot_download(
+#     repo_id="black-forest-labs/FLUX.1-dev",
+#     local_dir="./checkpoints/FLUX.1-dev",
+#     local_dir_use_symlinks=False
+# )
 
-# Florence-2-large
-snapshot_download(
-    repo_id="microsoft/Florence-2-large",
-    local_dir="./checkpoints/Florence-2-large",
-    local_dir_use_symlinks=False
-)
+# # Florence-2-large
+# snapshot_download(
+#     repo_id="microsoft/Florence-2-large",
+#     local_dir="./checkpoints/Florence-2-large",
+#     local_dir_use_symlinks=False
+# )
 
-# CLIP ViT Large
-snapshot_download(
-    repo_id="openai/clip-vit-large-patch14",
-    local_dir="./checkpoints/clip-vit-large-patch14",
-    local_dir_use_symlinks=False
-)
+# # CLIP ViT Large
+# snapshot_download(
+#     repo_id="openai/clip-vit-large-patch14",
+#     local_dir="./checkpoints/clip-vit-large-patch14",
+#     local_dir_use_symlinks=False
+# )
 
-# DINO ViT-s16
-snapshot_download(
-    repo_id="facebook/dino-vits16",
-    local_dir="./checkpoints/dino-vits16",
-    local_dir_use_symlinks=False
-)
+# # DINO ViT-s16
+# snapshot_download(
+#     repo_id="facebook/dino-vits16",
+#     local_dir="./checkpoints/dino-vits16",
+#     local_dir_use_symlinks=False
+# )
 
-# mPLUG Visual Question Answering
-snapshot_download(
-    repo_id="xingjianleng/mplug_visual-question-answering_coco_large_en",
-    local_dir="./checkpoints/mplug_visual-question-answering_coco_large_en",
-    local_dir_use_symlinks=False
-)
+# # mPLUG Visual Question Answering
+# snapshot_download(
+#     repo_id="xingjianleng/mplug_visual-question-answering_coco_large_en",
+#     local_dir="./checkpoints/mplug_visual-question-answering_coco_large_en",
+#     local_dir_use_symlinks=False
+# )
 
-# XVerse
-snapshot_download(
-    repo_id="ByteDance/XVerse",
-    local_dir="./checkpoints/XVerse",
-    local_dir_use_symlinks=False
-)
+# # XVerse
+# snapshot_download(
+#     repo_id="ByteDance/XVerse",
+#     local_dir="./checkpoints/XVerse",
+#     local_dir_use_symlinks=False
+# )
 
-hf_hub_download(
-    repo_id="facebook/sam2.1-hiera-large",
-    local_dir="./checkpoints/",
-    filename="sam2.1_hiera_large.pt",
-)
-
-
-
-os.environ["FLORENCE2_MODEL_PATH"]    = "./checkpoints/Florence-2-large"
-os.environ["SAM2_MODEL_PATH"]         = "./checkpoints/sam2.1_hiera_large.pt"
-os.environ["FACE_ID_MODEL_PATH"]      = "./checkpoints/model_ir_se50.pth"
-os.environ["CLIP_MODEL_PATH"]         = "./checkpoints/clip-vit-large-patch14"
-os.environ["FLUX_MODEL_PATH"]         = "./checkpoints/FLUX.1-dev"
-os.environ["DPG_VQA_MODEL_PATH"]      = "./checkpoints/mplug_visual-question-answering_coco_large_en"
-os.environ["DINO_MODEL_PATH"]         = "./checkpoints/dino-vits16"
-
-dtype = torch.bfloat16
-device = "cuda"
-
-config_path = "train/config/XVerse_config_demo.yaml"
-
-config = config_train = get_train_config(config_path)
-# config["model"]["dit_quant"] = "int8-quanto"
-config["model"]["use_dit_lora"] = False
-model = CustomFluxPipeline(
-    config, device, torch_dtype=dtype,
-)
-model.pipe.set_progress_bar_config(leave=False)
-
-face_model = FaceID(device)
-detector = ObjectDetector(device)
-
-config = get_train_config(config_path)
-model.config = config
-
-run_mode = "mod_only" # orig_only, mod_only, both
-store_attn_map = False
-run_name = time.strftime("%m%d-%H%M")
-
-num_inputs = 6
-
-ckpt_root = "./checkpoints/XVerse"
-model.clear_modulation_adapters()
-model.pipe.unload_lora_weights()
-if not os.path.exists(ckpt_root):
-    print("Checkpoint root does not exist.")
-
-modulation_adapter = load_modulation_adapter(model, config, dtype, device, f"{ckpt_root}/modulation_adapter", is_training=False)
-model.add_modulation_adapter(modulation_adapter)
-if config["model"]["use_dit_lora"]:
-    load_dit_lora(model, model.pipe, config, dtype, device, f"{ckpt_root}", is_training=False)
-
-vae_skip_iter = None
-attn_skip_iter = 0
+# hf_hub_download(
+#     repo_id="facebook/sam2.1-hiera-large",
+#     local_dir="./checkpoints/",
+#     filename="sam2.1_hiera_large.pt",
+# )
 
 
-def clear_images():
-    return [None, ]*num_inputs
+
+# os.environ["FLORENCE2_MODEL_PATH"]    = "./checkpoints/Florence-2-large"
+# os.environ["SAM2_MODEL_PATH"]         = "./checkpoints/sam2.1_hiera_large.pt"
+# os.environ["FACE_ID_MODEL_PATH"]      = "./checkpoints/model_ir_se50.pth"
+# os.environ["CLIP_MODEL_PATH"]         = "./checkpoints/clip-vit-large-patch14"
+# os.environ["FLUX_MODEL_PATH"]         = "./checkpoints/FLUX.1-dev"
+# os.environ["DPG_VQA_MODEL_PATH"]      = "./checkpoints/mplug_visual-question-answering_coco_large_en"
+# os.environ["DINO_MODEL_PATH"]         = "./checkpoints/dino-vits16"
+
+# dtype = torch.bfloat16
+# device = "cuda"
+
+# config_path = "train/config/XVerse_config_demo.yaml"
+
+# config = config_train = get_train_config(config_path)
+# # config["model"]["dit_quant"] = "int8-quanto"
+# config["model"]["use_dit_lora"] = False
+# model = CustomFluxPipeline(
+#     config, device, torch_dtype=dtype,
+# )
+# model.pipe.set_progress_bar_config(leave=False)
+
+# face_model = FaceID(device)
+# detector = ObjectDetector(device)
+
+# config = get_train_config(config_path)
+# model.config = config
+
+# run_mode = "mod_only" # orig_only, mod_only, both
+# store_attn_map = False
+# run_name = time.strftime("%m%d-%H%M")
+
+# num_inputs = 6
+
+# ckpt_root = "./checkpoints/XVerse"
+# model.clear_modulation_adapters()
+# model.pipe.unload_lora_weights()
+# if not os.path.exists(ckpt_root):
+#     print("Checkpoint root does not exist.")
+
+# modulation_adapter = load_modulation_adapter(model, config, dtype, device, f"{ckpt_root}/modulation_adapter", is_training=False)
+# model.add_modulation_adapter(modulation_adapter)
+# if config["model"]["use_dit_lora"]:
+#     load_dit_lora(model, model.pipe, config, dtype, device, f"{ckpt_root}", is_training=False)
+
+# vae_skip_iter = None
+# attn_skip_iter = 0
+
+
+# def clear_images():
+#     return [None, ]*num_inputs
 
 @spaces.GPU()
 def det_seg_img(image, label):
@@ -190,30 +187,6 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
     new_H = int(round(H * scaling_factor))
     new_W = int(round(W * scaling_factor))
     return pil_image.resize((new_W, new_H))
-
-# 使用循环生成六个图像输入
-images = []
-captions = []
-face_btns = []
-det_btns = []
-vlm_btns = []
-accordions = []
-idip_checkboxes = []
-accordion_states = []
-
-def open_accordion_on_example_selection(*args):
-    print("enter open_accordion_on_example_selection")
-    images = list(args[-18:-12])
-    outputs = []
-    for i, img in enumerate(images):
-        if img is not None:
-            print(f"open accordions {i}")
-            outputs.append(True)
-        else:
-            print(f"close accordions {i}")
-            outputs.append(False)
-    print(outputs)
-    return outputs
 
 @spaces.GPU()
 def generate_image(
@@ -547,8 +520,8 @@ with gr.Blocks() as demo:
         outputs=output
     )
 
-    # 修改清空函数的输出参数
-    clear_btn.click(clear_images, outputs=images)
+    # # 修改清空函数的输出参数
+    # clear_btn.click(clear_images, outputs=images)
 
     face_btn_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
     det_btn_1.click(det_seg_img, inputs=[image_1, caption_1], outputs=[image_1])
