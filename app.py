@@ -390,147 +390,149 @@ def update_inputs(is_open, index, state: list):
     print(indexs)
     return indexs, is_open
 
-with gr.Blocks() as demo:
-
-    indexs_state = gr.State([0, 1])  # 添加状态来存储 indexs
+if __name__ == "__main__":
+    with gr.Blocks() as demo:
     
-    gr.Markdown("### XVerse Demo")
-    with gr.Row():
-        with gr.Column():
-            prompt = gr.Textbox(label="Prompt", value="")
-            with gr.Accordion("Open for More!", open=False):
-                
-                with gr.Row():
-                    target_height = gr.Slider(512, 1024, step=128, value=768, label="Generated Height", info="")
-                    target_width = gr.Slider(512, 1024, step=128, value=768, label="Generated Width", info="")
-                    cond_size = gr.Slider(256, 384, step=128, value=256, label="Condition Size", info="")
-                with gr.Row():
-                    weight_id = gr.Slider(0.1, 5, step=0.1, value=3, label="weight_id")
-                    weight_ip = gr.Slider(0.1, 5, step=0.1, value=5, label="weight_ip")
-                with gr.Row():
-                    ip_scale_str = gr.Slider(0.5, 1.5, step=0.01, value=0.85, label="latent_lora_scale")
-                    vae_lora_scale = gr.Slider(0.5, 1.5, step=0.01, value=1.3, label="vae_lora_scale")
-                with gr.Row():
-                    vae_skip_iter_s1 = gr.Slider(0, 1, step=0.01, value=0.05, label="vae_skip_iter_before")
-                    vae_skip_iter_s2 = gr.Slider(0, 1, step=0.01, value=0.8, label="vae_skip_iter_after")
-                
+        indexs_state = gr.State([0, 1])  # 添加状态来存储 indexs
         
-                with gr.Row():
-                    weight_id_ip_str = gr.Textbox(
-                        value="0-1:1/3/5",
-                        label="weight_id_ip_str",
-                        interactive=False, visible=False
-                    )
-                    weight_id.change(
-                        lambda s1, s2: f"0-1:1/{s1}/{s2}",
-                        inputs=[weight_id, weight_ip],
-                        outputs=weight_id_ip_str
-                    )
-                    weight_ip.change(
-                        lambda s1, s2: f"0-1:1/{s1}/{s2}",
-                        inputs=[weight_id, weight_ip],
-                        outputs=weight_id_ip_str
-                    )
-                    vae_skip_iter = gr.Textbox(
-                        value="0-0.05:1,0.8-1:1",
-                        label="vae_skip_iter",
-                        interactive=False, visible=False
-                    )
-                    vae_skip_iter_s1.change(
-                        lambda s1, s2: f"0-{s1}:1,{s2}-1:1",
-                        inputs=[vae_skip_iter_s1, vae_skip_iter_s2],
-                        outputs=vae_skip_iter
-                    )
-                    vae_skip_iter_s2.change(
-                        lambda s1, s2: f"0-{s1}:1,{s2}-1:1",
-                        inputs=[vae_skip_iter_s1, vae_skip_iter_s2],
-                        outputs=vae_skip_iter
-                    )
+        gr.Markdown("### XVerse Demo")
+        with gr.Row():
+            with gr.Column():
+                prompt = gr.Textbox(label="Prompt", value="")
+                with gr.Accordion("Open for More!", open=False):
                     
-                
-                with gr.Row():
-                    db_latent_lora_scale_str = gr.Textbox(
-                        value="0-1:0.85",
-                        label="db_latent_lora_scale_str",
-                        interactive=False, visible=False
-                    )
-                    sb_latent_lora_scale_str = gr.Textbox(
-                        value="0-1:0.85",
-                        label="sb_latent_lora_scale_str",
-                        interactive=False, visible=False
-                    )
-                    vae_lora_scale_str = gr.Textbox(
-                        value="0-1:1.3",
-                        label="vae_lora_scale_str",
-                        interactive=False, visible=False
-                    )
-                    vae_lora_scale.change(
-                            lambda s: f"0-1:{s}",
-                            inputs=vae_lora_scale,
-                            outputs=vae_lora_scale_str
-                        )
-                    ip_scale_str.change(
-                            lambda s: [f"0-1:{s}", f"0-1:{s}"],
-                            inputs=ip_scale_str,
-                            outputs=[db_latent_lora_scale_str, sb_latent_lora_scale_str]
-                        )
-    
-                with gr.Row():
-                    double_attention = gr.Checkbox(value=False, label="Double Attention", visible=False)
-                    single_attention = gr.Checkbox(value=True, label="Single Attention", visible=False)            
-
-                clear_btn = gr.Button("清空输入图像")
-            with gr.Row():
-                with gr.Column():
-                    image_1 = gr.Image(type="filepath", label=f"Image 1")
-                    caption_1 = gr.Textbox(label=f"Caption 1", value="")
-                    id_ip_checkbox_1 = gr.Checkbox(value=False, label=f"ID or not 1", visible=True)
                     with gr.Row():
-                        vlm_btn_1 = gr.Button("Auto Caption")
-                        det_btn_1 = gr.Button("Det & Seg")
-                        face_btn_1 = gr.Button("Crop Face")
-
-                with gr.Column():
-                    image_2 = gr.Image(type="filepath", label=f"Image 2")
-                    caption_2 = gr.Textbox(label=f"Caption 2", value="")
-                    id_ip_checkbox_2 = gr.Checkbox(value=False, label=f"ID or not 2", visible=True)
+                        target_height = gr.Slider(512, 1024, step=128, value=768, label="Generated Height", info="")
+                        target_width = gr.Slider(512, 1024, step=128, value=768, label="Generated Width", info="")
+                        cond_size = gr.Slider(256, 384, step=128, value=256, label="Condition Size", info="")
                     with gr.Row():
-                        vlm_btn_2 = gr.Button("Auto Caption")
-                        det_btn_2 = gr.Button("Det & Seg")
-                        face_btn_2 = gr.Button("Crop Face")
+                        weight_id = gr.Slider(0.1, 5, step=0.1, value=3, label="weight_id")
+                        weight_ip = gr.Slider(0.1, 5, step=0.1, value=5, label="weight_ip")
+                    with gr.Row():
+                        ip_scale_str = gr.Slider(0.5, 1.5, step=0.01, value=0.85, label="latent_lora_scale")
+                        vae_lora_scale = gr.Slider(0.5, 1.5, step=0.01, value=1.3, label="vae_lora_scale")
+                    with gr.Row():
+                        vae_skip_iter_s1 = gr.Slider(0, 1, step=0.01, value=0.05, label="vae_skip_iter_before")
+                        vae_skip_iter_s2 = gr.Slider(0, 1, step=0.01, value=0.8, label="vae_skip_iter_after")
+                    
+            
+                    with gr.Row():
+                        weight_id_ip_str = gr.Textbox(
+                            value="0-1:1/3/5",
+                            label="weight_id_ip_str",
+                            interactive=False, visible=False
+                        )
+                        weight_id.change(
+                            lambda s1, s2: f"0-1:1/{s1}/{s2}",
+                            inputs=[weight_id, weight_ip],
+                            outputs=weight_id_ip_str
+                        )
+                        weight_ip.change(
+                            lambda s1, s2: f"0-1:1/{s1}/{s2}",
+                            inputs=[weight_id, weight_ip],
+                            outputs=weight_id_ip_str
+                        )
+                        vae_skip_iter = gr.Textbox(
+                            value="0-0.05:1,0.8-1:1",
+                            label="vae_skip_iter",
+                            interactive=False, visible=False
+                        )
+                        vae_skip_iter_s1.change(
+                            lambda s1, s2: f"0-{s1}:1,{s2}-1:1",
+                            inputs=[vae_skip_iter_s1, vae_skip_iter_s2],
+                            outputs=vae_skip_iter
+                        )
+                        vae_skip_iter_s2.change(
+                            lambda s1, s2: f"0-{s1}:1,{s2}-1:1",
+                            inputs=[vae_skip_iter_s1, vae_skip_iter_s2],
+                            outputs=vae_skip_iter
+                        )
+                        
+                    
+                    with gr.Row():
+                        db_latent_lora_scale_str = gr.Textbox(
+                            value="0-1:0.85",
+                            label="db_latent_lora_scale_str",
+                            interactive=False, visible=False
+                        )
+                        sb_latent_lora_scale_str = gr.Textbox(
+                            value="0-1:0.85",
+                            label="sb_latent_lora_scale_str",
+                            interactive=False, visible=False
+                        )
+                        vae_lora_scale_str = gr.Textbox(
+                            value="0-1:1.3",
+                            label="vae_lora_scale_str",
+                            interactive=False, visible=False
+                        )
+                        vae_lora_scale.change(
+                                lambda s: f"0-1:{s}",
+                                inputs=vae_lora_scale,
+                                outputs=vae_lora_scale_str
+                            )
+                        ip_scale_str.change(
+                                lambda s: [f"0-1:{s}", f"0-1:{s}"],
+                                inputs=ip_scale_str,
+                                outputs=[db_latent_lora_scale_str, sb_latent_lora_scale_str]
+                            )
+        
+                    with gr.Row():
+                        double_attention = gr.Checkbox(value=False, label="Double Attention", visible=False)
+                        single_attention = gr.Checkbox(value=True, label="Single Attention", visible=False)            
     
-        with gr.Column():
-            output = gr.Image(label="生成的图像")
-            seed = gr.Number(value=42, label="Seed", info="")
-            gen_btn = gr.Button("生成图像")
-
-    gr.Markdown("### Examples")
-    gen_btn.click(
-        generate_image, 
-        inputs=[
-            prompt, cond_size, target_height, target_width, seed,
-            vae_skip_iter, weight_id_ip_str,
-            double_attention, single_attention,
-            db_latent_lora_scale_str, sb_latent_lora_scale_str, vae_lora_scale_str,
-            indexs_state,  # 传递 indexs 状态
-            # *images,  
-            # *captions, 
-            # *idip_checkboxes,
-        ], 
-        outputs=output
-    )
-
-    # # 修改清空函数的输出参数
-    # clear_btn.click(clear_images, outputs=images)
-
-    face_btn_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
-    det_btn_1.click(det_seg_img, inputs=[image_1, caption_1], outputs=[image_1])
-    vlm_btn_1.click(vlm_img_caption, inputs=[image_1], outputs=[caption_1])
-
-    face_btn_2.click(crop_face_img, inputs=[image_2], outputs=[image_2])
-    det_btn_2.click(det_seg_img, inputs=[image_2, caption_2], outputs=[image_2])
-    vlm_btn_2.click(vlm_img_caption, inputs=[image_2], outputs=[caption_2])
-
-
-demo.queue()
-demo.launch(share=True)
+                    clear_btn = gr.Button("清空输入图像")
+                with gr.Row():
+                    with gr.Column():
+                        image_1 = gr.Image(type="filepath", label=f"Image 1")
+                        caption_1 = gr.Textbox(label=f"Caption 1", value="")
+                        id_ip_checkbox_1 = gr.Checkbox(value=False, label=f"ID or not 1", visible=True)
+                        with gr.Row():
+                            vlm_btn_1 = gr.Button("Auto Caption")
+                            det_btn_1 = gr.Button("Det & Seg")
+                            face_btn_1 = gr.Button("Crop Face")
+    
+                    with gr.Column():
+                        image_2 = gr.Image(type="filepath", label=f"Image 2")
+                        caption_2 = gr.Textbox(label=f"Caption 2", value="")
+                        id_ip_checkbox_2 = gr.Checkbox(value=False, label=f"ID or not 2", visible=True)
+                        with gr.Row():
+                            vlm_btn_2 = gr.Button("Auto Caption")
+                            det_btn_2 = gr.Button("Det & Seg")
+                            face_btn_2 = gr.Button("Crop Face")
+        
+            with gr.Column():
+                output = gr.Image(label="生成的图像")
+                seed = gr.Number(value=42, label="Seed", info="")
+                gen_btn = gr.Button("生成图像")
+    
+        gr.Markdown("### Examples")
+        gen_btn.click(
+            generate_image, 
+            inputs=[
+                prompt, cond_size, target_height, target_width, seed,
+                vae_skip_iter, weight_id_ip_str,
+                double_attention, single_attention,
+                db_latent_lora_scale_str, sb_latent_lora_scale_str, vae_lora_scale_str,
+                indexs_state,  # 传递 indexs 状态
+                # *images,  
+                # *captions, 
+                # *idip_checkboxes,
+            ], 
+            outputs=output
+        )
+    
+        # # 修改清空函数的输出参数
+        # clear_btn.click(clear_images, outputs=images)
+    
+        face_btn_1.click(crop_face_img, inputs=[image_1], outputs=[image_1])
+        det_btn_1.click(det_seg_img, inputs=[image_1, caption_1], outputs=[image_1])
+        vlm_btn_1.click(vlm_img_caption, inputs=[image_1], outputs=[caption_1])
+    
+        face_btn_2.click(crop_face_img, inputs=[image_2], outputs=[image_2])
+        det_btn_2.click(det_seg_img, inputs=[image_2, caption_2], outputs=[image_2])
+        vlm_btn_2.click(vlm_img_caption, inputs=[image_2], outputs=[caption_2])
+    
+    
+    
+    demo.queue()
+    demo.launch(share=True)
