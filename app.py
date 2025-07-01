@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# STEP 1: Very first thing in the file: force spawn
-import multiprocessing as mp
-mp.set_start_method("spawn", force=True)
 
 import spaces
 
@@ -119,7 +116,7 @@ detector = ObjectDetector(device)
 config = get_train_config(config_path)
 model.config = config
 
-run_mode = "mod_only" # orig_only, mod_only, both
+run_mode = "mod_only"
 store_attn_map = False
 run_name = time.strftime("%m%d-%H%M")
 
@@ -166,7 +163,6 @@ def crop_face_img(image):
     if isinstance(image, str):
         image = Image.open(image).convert("RGB")
 
-    # image = resize_keep_aspect_ratio(image, 1024)
     image = pad_to_square(image).resize((2048, 2048))
     
     face_bbox = face_model.detect(
@@ -194,7 +190,7 @@ def vlm_img_caption(image):
 
 
 def generate_random_string(length=4):
-    letters = string.ascii_letters  # 包含大小写字母的字符串
+    letters = string.ascii_letters 
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
 
@@ -209,31 +205,31 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
 
 @spaces.GPU()
 def generate_image(
-    prompt, 
+    prompt,     
     cond_size, target_height, target_width, 
     seed, 
     vae_skip_iter, control_weight_lambda,
-    double_attention,  # 新增参数
-    single_attention,  # 新增参数
+    double_attention,
+    single_attention,
     ip_scale,
     latent_sblora_scale_str, vae_lora_scale,
-    indexs,  # 新增参数
-    *images_captions_faces,  # Combine all unpacked arguments into one tuple
+    indices,
+    session_id,
+    *images_captions_faces,
 ):
     torch.cuda.empty_cache()
     num_images = 1
 
-    # Determine the number of images, captions, and faces based on the indexs length
     images = list(images_captions_faces[:num_inputs])
     captions = list(images_captions_faces[num_inputs:2 * num_inputs])
     idips_checkboxes = list(images_captions_faces[2 * num_inputs:3 * num_inputs])
-    images = [images[i] for i in indexs]
-    captions = [captions[i] for i in indexs]
-    idips_checkboxes = [idips_checkboxes[i] for i in indexs]
+    images = [images[i] for i in indices]
+    captions = [captions[i] for i in indices]
+    idips_checkboxes = [idips_checkboxes[i] for i in indices]
 
     print(f"Length of images: {len(images)}")
     print(f"Length of captions: {len(captions)}")
-    print(f"Indexs: {indexs}")
+    print(f"indices: {indices}")
     
     print(f"Control weight lambda: {control_weight_lambda}")
     if control_weight_lambda != "no":
@@ -243,7 +239,6 @@ def generate_image(
             if ':' in part:
                 left, right = part.split(':')
                 values = right.split('/')
-                # 保存整体值
                 global_value = values[0]
                 id_value = values[1]
                 ip_value = values[2]
@@ -265,7 +260,7 @@ def generate_image(
     use_words = []
     cur_run_time = time.strftime("%m%d-%H%M%S")
     tmp_dir_root = f"tmp/gradio_demo/{run_name}"
-    temp_dir = f"{tmp_dir_root}/{cur_run_time}_{generate_random_string(4)}"
+    temp_dir = f"{tmp_dir_root}/{session_id}/{cur_run_time}_{generate_random_string(4)}"
     os.makedirs(temp_dir, exist_ok=True)
     print(f"Temporary directory created: {temp_dir}")
     for i, (image_path, caption) in enumerate(zip(images, captions)):
@@ -279,7 +274,7 @@ def generate_image(
                 prompt = prompt.replace(f"ENT{i+1}", caption)
             
             image = resize_keep_aspect_ratio(Image.open(image_path), 768)
-            save_path = f"{temp_dir}/tmp_resized_input_{i}.png"
+            save_path = f"{temp_dir}/{session_id}/tmp_resized_input_{i}.png"
             image.save(save_path)
             
             input_image_path = save_path
@@ -317,7 +312,7 @@ def generate_image(
             ),
         ]
     
-    json_dump(test_sample, f"{temp_dir}/test_sample.json", 'utf-8')
+    json_dump(test_sample, f"{temp_dir}/{session_id}/test_sample.json", 'utf-8')
     assert single_attention == True
     target_size = int(round((target_width * target_height) ** 0.5) // 16 * 16)
     print(test_sample)
@@ -338,10 +333,10 @@ def generate_image(
         target_width=target_width,
         seed=seed,
         store_attn_map=store_attn_map, 
-        vae_skip_iter=vae_skip_iter,  # 使用新的参数
-        control_weight_lambda=control_weight_lambda,  # 传递新的参数
-        double_attention=double_attention,  # 新增参数
-        single_attention=single_attention,  # 新增参数
+        vae_skip_iter=vae_skip_iter,  
+        control_weight_lambda=control_weight_lambda, 
+        double_attention=double_attention,  
+        single_attention=single_attention,  
         ip_scale=ip_scale,
         use_latent_sblora_control=use_latent_sblora_control,
         latent_sblora_scale=latent_sblora_scale_str,
@@ -353,12 +348,12 @@ def generate_image(
         num_rows = int(math.ceil(num_images / num_cols))
         image = image_grid(image, num_rows, num_cols)
 
-    save_path = f"{temp_dir}/tmp_result.png"
-    image.save(save_path)
+    # save_path = f"{temp_dir}/tmp_result.png"
+    # image.save(save_path)
 
     return image
 
-def create_image_input(index, open=True, indexs_state=None):
+def create_image_input(index, open=True, indices_state=None):
     accordion_state = gr.State(open)
     with gr.Column():
         with gr.Accordion(f"Input Image {index + 1}", open=accordion_state.value) as accordion:
@@ -366,18 +361,18 @@ def create_image_input(index, open=True, indexs_state=None):
             caption = gr.Textbox(label=f"Caption {index + 1}", value="")
             id_ip_checkbox = gr.Checkbox(value=False, label=f"ID or not {index + 1}", visible=True)
             with gr.Row():
-                vlm_btn = gr.Button("Auto Caption")
+                vlm_btn = gr.Button("Generate Caption")
                 det_btn = gr.Button("Det & Seg")
                 face_btn = gr.Button("Crop Face")
             accordion.expand(
-                    inputs=[indexs_state],
+                    inputs=[indices_state],
                     fn = lambda x: update_inputs(True, index, x), 
-                    outputs=[indexs_state, accordion_state],
+                    outputs=[indices_state, accordion_state],
                 )
             accordion.collapse(
-                    inputs=[indexs_state],
+                    inputs=[indices_state],
                     fn = lambda x: update_inputs(False, index, x), 
-                    outputs=[indexs_state, accordion_state],
+                    outputs=[indices_state, accordion_state],
                 )
     return image, caption, face_btn, det_btn, vlm_btn, accordion_state, accordion, id_ip_checkbox
 
@@ -402,44 +397,95 @@ def merge_instances(orig_img, indices, ins_bboxes, ins_images):
 
 def change_accordion(at: bool, index: int, state: list):
     print(at, state)
-    indexs = state
+    indices = state
     if at:
-        if index not in indexs:
-            indexs.append(index)
+        if index not in indices:
+            indices.append(index)
     else:
-        if index in indexs:
-            indexs.remove(index)
+        if index in indices:
+            indices.remove(index)
     
-    # 确保 indexs 是有序的
-    indexs.sort()
-    print(indexs)
-    return gr.Accordion(open=at), indexs
+    # 确保 indices 是有序的
+    indices.sort()
+    print(indices)
+    return gr.Accordion(open=at), indices
 
 def update_inputs(is_open, index, state: list):
-    indexs = state
+    indices = state
     if is_open:
-        if index not in indexs:
-            indexs.append(index)
+        if index not in indices:
+            indices.append(index)
     else:
-        if index in indexs:
-            indexs.remove(index)
+        if index in indices:
+            indices.remove(index)
     
-    # 确保 indexs 是有序的
-    indexs.sort()
-    print(indexs)
-    return indexs, is_open
+    indices.sort()
+    print(indices)
+    return indices, is_open
+
+def start_session(request: gr.Request):
+    """
+    Initialize a new user session and return the session identifier.
+    
+    This function is triggered when the Gradio demo loads and creates a unique
+    session hash that will be used to organize outputs and temporary files
+    for this specific user session.
+    
+    Args:
+        request (gr.Request): Gradio request object containing session information
+        
+    Returns:
+        str: Unique session hash identifier
+    """
+    return request.session_hash
+
+
+# Cleanup on unload
+def cleanup(request: gr.Request):
+    """
+    Clean up session-specific directories and temporary files when the user session ends.
+    
+    This function is triggered when the Gradio demo is unloaded (e.g., when the user
+    closes the browser tab or navigates away). It removes all temporary files and
+    directories created during the user's session to free up storage space.
+    
+    Args:
+        request (gr.Request): Gradio request object containing session information
+    """
+    sid = request.session_hash
+    if sid:
+        d1 = os.path.join(os.environ["PIXEL3DMM_PREPROCESSED_DATA"], sid)
+        d2 = os.path.join(os.environ["PIXEL3DMM_TRACKING_OUTPUT"], sid)
+        shutil.rmtree(d1, ignore_errors=True)
+        shutil.rmtree(d2, ignore_errors=True)
+        
 
 if __name__ == "__main__":
 
     with gr.Blocks() as demo:
-    
-        indexs_state = gr.State([0, 1])  # 添加状态来存储 indexs
+        session_state = gr.State()
+        demo.load(start_session, outputs=[session_state])
+        indices_state = gr.State([0, 1])
         
         gr.Markdown("### XVerse Demo")
         with gr.Row():
             with gr.Column():
+                with gr.Row():
+                    for i in range(num_inputs):
+                        image, caption, face_btn, det_btn, vlm_btn, accordion_state, accordion, id_ip_checkbox = create_image_input(i, open=i<2, indices_state=indices_state)
+                        images.append(image)
+                        idip_checkboxes.append(id_ip_checkbox)
+                        captions.append(caption)
+                        face_btns.append(face_btn)
+                        det_btns.append(det_btn)
+                        vlm_btns.append(vlm_btn)
+                        accordion_states.append(accordion_state)
+
+                        accordions.append(accordion)
+                            
                 prompt = gr.Textbox(label="Prompt", value="")
-                with gr.Accordion("Open for More!", open=False):
+                gen_btn = gr.Button("Generate", variant="primary")
+                with gr.Accordion("Advanced Settings", open=False):
                     
                     with gr.Row():
                         target_height = gr.Slider(512, 1024, step=128, value=768, label="Generated Height", info="")
@@ -520,24 +566,13 @@ if __name__ == "__main__":
                         double_attention = gr.Checkbox(value=False, label="Double Attention", visible=False)
                         single_attention = gr.Checkbox(value=True, label="Single Attention", visible=False)            
     
-                    clear_btn = gr.Button("清空输入图像")
-                    with gr.Row():
-                        for i in range(num_inputs):
-                            image, caption, face_btn, det_btn, vlm_btn, accordion_state, accordion, id_ip_checkbox = create_image_input(i, open=i<2, indexs_state=indexs_state)
-                            images.append(image)
-                            idip_checkboxes.append(id_ip_checkbox)
-                            captions.append(caption)
-                            face_btns.append(face_btn)
-                            det_btns.append(det_btn)
-                            vlm_btns.append(vlm_btn)
-                            accordion_states.append(accordion_state)
+                    clear_btn = gr.Button("Clear Images")
 
-                            accordions.append(accordion)
         
             with gr.Column():
-                output = gr.Image(label="生成的图像")
+                output = gr.Image(label="Result")
                 seed = gr.Number(value=42, label="Seed", info="")
-                gen_btn = gr.Button("生成图像")
+                
 
         gen_btn.click(
             generate_image, 
@@ -546,25 +581,23 @@ if __name__ == "__main__":
                 vae_skip_iter, weight_id_ip_str,
                 double_attention, single_attention,
                 db_latent_lora_scale_str, sb_latent_lora_scale_str, vae_lora_scale_str,
-                indexs_state,  # 传递 indexs 状态
+                indices_state,
+                session_state,
                 *images,  
                 *captions, 
                 *idip_checkboxes,
             ], 
             outputs=output
         )
-    
-
-        # 修改清空函数的输出参数
         clear_btn.click(clear_images, outputs=images)
-    
-        # 循环绑定 Det & Seg 和 Auto Caption 按钮的点击事件
+
         for i in range(num_inputs):
             face_btns[i].click(crop_face_img, inputs=[images[i]], outputs=[images[i]])
             det_btns[i].click(det_seg_img, inputs=[images[i], captions[i]], outputs=[images[i]])
             vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
-            accordion_states[i].change(fn=lambda x, state, index=i: change_accordion(x, index, state), inputs=[accordion_states[i], indexs_state], outputs=[accordions[i], indexs_state])
-        
+            accordion_states[i].change(fn=lambda x, state, index=i: change_accordion(x, index, state), inputs=[accordion_states[i], indices_state], outputs=[accordions[i], indices_state])
+
+        demo.unload(cleanup)
     
     demo.queue()
     demo.launch()
