@@ -380,8 +380,8 @@ def create_min_image_input(index, open=True, indices_state=None):
 
     with gr.Column(min_width=256):
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
-            caption = gr.Textbox(label=f"Caption {index + 1}", value="")
-            id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=True)
+            caption = gr.Textbox(label=f"ENT{index + 1}", value="")
+            id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=False)
             with gr.Row():
                 vlm_btn = gr.Button("Generate Caption", visible=False)
                 det_btn = gr.Button("Det & Seg", visible=False)
@@ -472,7 +472,7 @@ def cleanup(request: gr.Request):
 css = """
 #col-container {
     margin: 0 auto;
-    max-width: 1048px;
+    max-width: 1096px;
 }
 """
 
@@ -497,7 +497,7 @@ if __name__ == "__main__":
                             det_btns.append(det_btn)
                             vlm_btns.append(vlm_btn)
                                 
-                    prompt = gr.Textbox(label="Prompt", value="")
+                    prompt = gr.Textbox(label="Prompt", placeholder="e.g., ENT1 and ENT2")
                     gen_btn = gr.Button("Generate", variant="primary")
                     with gr.Accordion("Advanced Settings", open=False, visible=False):
 
