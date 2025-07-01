@@ -20,7 +20,7 @@ from PIL import Image, ImageFilter
 import numpy as np
 import cv2
 
-import .pipeline_tools
+import src.flux.pipeline_tools
 
 # condition_dict = {
 #     "depth": 0,
