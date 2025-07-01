@@ -228,143 +228,145 @@ def generate_image(
     indexs,  # 新增参数
     *images_captions_faces,  # Combine all unpacked arguments into one tuple
 ):
-    torch.cuda.empty_cache()
-    num_images = 1
+    # torch.cuda.empty_cache()
+    # num_images = 1
 
-    # Determine the number of images, captions, and faces based on the indexs length
-    images = list(images_captions_faces[:num_inputs])
-    captions = list(images_captions_faces[num_inputs:2 * num_inputs])
-    idips_checkboxes = list(images_captions_faces[2 * num_inputs:3 * num_inputs])
-    images = [images[i] for i in indexs]
-    captions = [captions[i] for i in indexs]
-    idips_checkboxes = [idips_checkboxes[i] for i in indexs]
+    # # Determine the number of images, captions, and faces based on the indexs length
+    # images = list(images_captions_faces[:num_inputs])
+    # captions = list(images_captions_faces[num_inputs:2 * num_inputs])
+    # idips_checkboxes = list(images_captions_faces[2 * num_inputs:3 * num_inputs])
+    # images = [images[i] for i in indexs]
+    # captions = [captions[i] for i in indexs]
+    # idips_checkboxes = [idips_checkboxes[i] for i in indexs]
 
-    print(f"Length of images: {len(images)}")
-    print(f"Length of captions: {len(captions)}")
-    print(f"Indexs: {indexs}")
+    # print(f"Length of images: {len(images)}")
+    # print(f"Length of captions: {len(captions)}")
+    # print(f"Indexs: {indexs}")
     
-    print(f"Control weight lambda: {control_weight_lambda}")
-    if control_weight_lambda != "no":
-        parts = control_weight_lambda.split(',')
-        new_parts = []
-        for part in parts:
-            if ':' in part:
-                left, right = part.split(':')
-                values = right.split('/')
-                # 保存整体值
-                global_value = values[0]
-                id_value = values[1]
-                ip_value = values[2]
-                new_values = [global_value]
-                for is_id in idips_checkboxes:
-                    if is_id:
-                        new_values.append(id_value)
-                    else:
-                        new_values.append(ip_value)
-                new_part = f"{left}:{('/'.join(new_values))}"
-                new_parts.append(new_part)
-            else:
-                new_parts.append(part)
-        control_weight_lambda = ','.join(new_parts)
+    # print(f"Control weight lambda: {control_weight_lambda}")
+    # if control_weight_lambda != "no":
+    #     parts = control_weight_lambda.split(',')
+    #     new_parts = []
+    #     for part in parts:
+    #         if ':' in part:
+    #             left, right = part.split(':')
+    #             values = right.split('/')
+    #             # 保存整体值
+    #             global_value = values[0]
+    #             id_value = values[1]
+    #             ip_value = values[2]
+    #             new_values = [global_value]
+    #             for is_id in idips_checkboxes:
+    #                 if is_id:
+    #                     new_values.append(id_value)
+    #                 else:
+    #                     new_values.append(ip_value)
+    #             new_part = f"{left}:{('/'.join(new_values))}"
+    #             new_parts.append(new_part)
+    #         else:
+    #             new_parts.append(part)
+    #     control_weight_lambda = ','.join(new_parts)
     
-    print(f"Control weight lambda: {control_weight_lambda}")
+    # print(f"Control weight lambda: {control_weight_lambda}")
 
-    src_inputs = []
-    use_words = []
-    cur_run_time = time.strftime("%m%d-%H%M%S")
-    tmp_dir_root = f"tmp/gradio_demo/{run_name}"
-    temp_dir = f"{tmp_dir_root}/{cur_run_time}_{generate_random_string(4)}"
-    os.makedirs(temp_dir, exist_ok=True)
-    print(f"Temporary directory created: {temp_dir}")
-    for i, (image_path, caption) in enumerate(zip(images, captions)):
-        if image_path:
-            if caption.startswith("a ") or caption.startswith("A "):
-                word = caption[2:]
-            else:
-                word = caption
+    # src_inputs = []
+    # use_words = []
+    # cur_run_time = time.strftime("%m%d-%H%M%S")
+    # tmp_dir_root = f"tmp/gradio_demo/{run_name}"
+    # temp_dir = f"{tmp_dir_root}/{cur_run_time}_{generate_random_string(4)}"
+    # os.makedirs(temp_dir, exist_ok=True)
+    # print(f"Temporary directory created: {temp_dir}")
+    # for i, (image_path, caption) in enumerate(zip(images, captions)):
+    #     if image_path:
+    #         if caption.startswith("a ") or caption.startswith("A "):
+    #             word = caption[2:]
+    #         else:
+    #             word = caption
             
-            if f"ENT{i+1}" in prompt:
-                prompt = prompt.replace(f"ENT{i+1}", caption)
+    #         if f"ENT{i+1}" in prompt:
+    #             prompt = prompt.replace(f"ENT{i+1}", caption)
             
-            image = resize_keep_aspect_ratio(Image.open(image_path), 768)
-            save_path = f"{temp_dir}/tmp_resized_input_{i}.png"
-            image.save(save_path)
+    #         image = resize_keep_aspect_ratio(Image.open(image_path), 768)
+    #         save_path = f"{temp_dir}/tmp_resized_input_{i}.png"
+    #         image.save(save_path)
             
-            input_image_path = save_path
+    #         input_image_path = save_path
 
-            src_inputs.append(
-                {
-                    "image_path": input_image_path,
-                    "caption": caption
-                }
-            )
-            use_words.append((i, word, word))
+    #         src_inputs.append(
+    #             {
+    #                 "image_path": input_image_path,
+    #                 "caption": caption
+    #             }
+    #         )
+    #         use_words.append((i, word, word))
 
 
-    test_sample = dict(
-        input_images=[], position_delta=[0, -32], 
-        prompt=prompt,
-        target_height=target_height,
-        target_width=target_width,
-        seed=seed,
-        cond_size=cond_size,
-        vae_skip_iter=vae_skip_iter,
-        lora_scale=ip_scale,
-        control_weight_lambda=control_weight_lambda,
-        latent_sblora_scale=latent_sblora_scale_str,
-        condition_sblora_scale=vae_lora_scale,
-        double_attention=double_attention,
-        single_attention=single_attention,
-    )
-    if len(src_inputs) > 0:
-        test_sample["modulation"] = [
-            dict(
-                type="adapter",
-                src_inputs=src_inputs,
-                use_words=use_words,
-            ),
-        ]
+    # test_sample = dict(
+    #     input_images=[], position_delta=[0, -32], 
+    #     prompt=prompt,
+    #     target_height=target_height,
+    #     target_width=target_width,
+    #     seed=seed,
+    #     cond_size=cond_size,
+    #     vae_skip_iter=vae_skip_iter,
+    #     lora_scale=ip_scale,
+    #     control_weight_lambda=control_weight_lambda,
+    #     latent_sblora_scale=latent_sblora_scale_str,
+    #     condition_sblora_scale=vae_lora_scale,
+    #     double_attention=double_attention,
+    #     single_attention=single_attention,
+    # )
+    # if len(src_inputs) > 0:
+    #     test_sample["modulation"] = [
+    #         dict(
+    #             type="adapter",
+    #             src_inputs=src_inputs,
+    #             use_words=use_words,
+    #         ),
+    #     ]
     
-    json_dump(test_sample, f"{temp_dir}/test_sample.json", 'utf-8')
-    assert single_attention == True
-    target_size = int(round((target_width * target_height) ** 0.5) // 16 * 16)
-    print(test_sample)
+    # json_dump(test_sample, f"{temp_dir}/test_sample.json", 'utf-8')
+    # assert single_attention == True
+    # target_size = int(round((target_width * target_height) ** 0.5) // 16 * 16)
+    # print(test_sample)
 
-    model.config["train"]["dataset"]["val_condition_size"] = cond_size
-    model.config["train"]["dataset"]["val_target_size"] = target_size
+    # model.config["train"]["dataset"]["val_condition_size"] = cond_size
+    # model.config["train"]["dataset"]["val_target_size"] = target_size
     
-    if control_weight_lambda == "no":
-        control_weight_lambda = None
-    if vae_skip_iter == "no":
-        vae_skip_iter = None
-    use_condition_sblora_control = True
-    use_latent_sblora_control = True
-    image = generate_from_test_sample(
-        test_sample, model.pipe, model.config, 
-        num_images=num_images, 
-        target_height=target_height,
-        target_width=target_width,
-        seed=seed,
-        store_attn_map=store_attn_map, 
-        vae_skip_iter=vae_skip_iter,  # 使用新的参数
-        control_weight_lambda=control_weight_lambda,  # 传递新的参数
-        double_attention=double_attention,  # 新增参数
-        single_attention=single_attention,  # 新增参数
-        ip_scale=ip_scale,
-        use_latent_sblora_control=use_latent_sblora_control,
-        latent_sblora_scale=latent_sblora_scale_str,
-        use_condition_sblora_control=use_condition_sblora_control,
-        condition_sblora_scale=vae_lora_scale,
-    )
-    if isinstance(image, list):
-        num_cols = 2
-        num_rows = int(math.ceil(num_images / num_cols))
-        image = image_grid(image, num_rows, num_cols)
+    # if control_weight_lambda == "no":
+    #     control_weight_lambda = None
+    # if vae_skip_iter == "no":
+    #     vae_skip_iter = None
+    # use_condition_sblora_control = True
+    # use_latent_sblora_control = True
+    # image = generate_from_test_sample(
+    #     test_sample, model.pipe, model.config, 
+    #     num_images=num_images, 
+    #     target_height=target_height,
+    #     target_width=target_width,
+    #     seed=seed,
+    #     store_attn_map=store_attn_map, 
+    #     vae_skip_iter=vae_skip_iter,  # 使用新的参数
+    #     control_weight_lambda=control_weight_lambda,  # 传递新的参数
+    #     double_attention=double_attention,  # 新增参数
+    #     single_attention=single_attention,  # 新增参数
+    #     ip_scale=ip_scale,
+    #     use_latent_sblora_control=use_latent_sblora_control,
+    #     latent_sblora_scale=latent_sblora_scale_str,
+    #     use_condition_sblora_control=use_condition_sblora_control,
+    #     condition_sblora_scale=vae_lora_scale,
+    # )
+    # if isinstance(image, list):
+    #     num_cols = 2
+    #     num_rows = int(math.ceil(num_images / num_cols))
+    #     image = image_grid(image, num_rows, num_cols)
 
-    save_path = f"{temp_dir}/tmp_result.png"
-    image.save(save_path)
+    # save_path = f"{temp_dir}/tmp_result.png"
+    # image.save(save_path)
 
-    return image
+    # return image
+
+    return None
 
 
 
@@ -557,4 +559,5 @@ with gr.Blocks() as demo:
     vlm_btn_2.click(vlm_img_caption, inputs=[image_2], outputs=[caption_2])
 
 
-demo.queue().launch(share=True)
+demo.queue()
+demo.launch(share=True)
