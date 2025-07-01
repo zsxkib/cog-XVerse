@@ -12,6 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# STEP 1: Very first thing in the file: force spawn
+import multiprocessing as mp
+mp.set_start_method("spawn", force=True)
+
 import spaces
 
 import tempfile
