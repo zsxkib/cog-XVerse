@@ -616,6 +616,7 @@ if __name__ == "__main__":
                             [
                                 "ENT1 wearing a tiny hat", 
                                 "sample/hamster.jpg", "a hamster",
+                                None, None,
                             ],
                             [
                                 "ENT1 in a red dress is smiling", 
