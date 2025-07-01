@@ -30,7 +30,8 @@ import os
 os.environ["NCCL_P2P_DISABLE"]="1"
 os.environ["NCCL_IB_DISABLE"]="1"
 
-from src.flux.generate import generate_from_test_sample, seed_everything
+import src.flux.generate
+# from src.flux.generate import generate_from_test_sample, seed_everything
 # from src.flux.pipeline_tools import CustomFluxPipeline, load_modulation_adapter, load_dit_lora
 # from src.utils.data_utils import get_train_config, image_grid, pil2tensor, json_dump, pad_to_square, cv2pil, merge_bboxes
 # from eval.tools.face_id import FaceID
