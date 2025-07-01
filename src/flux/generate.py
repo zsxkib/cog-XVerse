@@ -19,7 +19,7 @@ from PIL import Image
 from diffusers.pipelines import FluxPipeline
 from typing import List, Union, Optional, Dict, Any, Callable
 from src.flux.transformer import tranformer_forward
-from src.flux.condition import Condition
+import src.flux.condition
 
 # # from diffusers.pipelines.flux.pipeline_flux import (
 # #     FluxPipelineOutput,
