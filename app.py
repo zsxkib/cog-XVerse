@@ -38,6 +38,15 @@ import torch
 
 os.environ["XVERSE_PREPROCESSED_DATA"] = f"{os.getcwd()}/proprocess_data"
 
+
+# FLUX.1-schnell
+snapshot_download(
+    repo_id="black-forest-labs/FLUX.1-schnell",
+    local_dir="/data/checkpoints/FLUX.1-schnell",
+    local_dir_use_symlinks=False
+)
+
+
 # # FLUX.1-dev
 # snapshot_download(
 #     repo_id="black-forest-labs/FLUX.1-dev",
@@ -92,7 +101,9 @@ os.environ["FLORENCE2_MODEL_PATH"]    = "/data/checkpoints/Florence-2-large"
 os.environ["SAM2_MODEL_PATH"]         = "/data/checkpoints/sam2.1_hiera_large.pt"
 os.environ["FACE_ID_MODEL_PATH"]      = "./checkpoints/model_ir_se50.pth"
 os.environ["CLIP_MODEL_PATH"]         = "/data/checkpoints/clip-vit-large-patch14"
-os.environ["FLUX_MODEL_PATH"]         = "/data/checkpoints/FLUX.1-dev"
+# os.environ["FLUX_MODEL_PATH"]         = "/data/checkpoints/FLUX.1-dev"
+os.environ["FLUX_MODEL_PATH"]         = "/data/checkpoints/FLUX.1-schnell"
+
 os.environ["DPG_VQA_MODEL_PATH"]      = "/data/checkpoints/mplug_visual-question-answering_coco_large_en"
 os.environ["DINO_MODEL_PATH"]         = "/data/checkpoints/dino-vits16"
 
