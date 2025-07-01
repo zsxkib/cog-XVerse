@@ -217,7 +217,7 @@ def generate_image(
     target_width = 768, 
     seed = 42, 
     vae_skip_iter = "0-0.05:1,0.8-1:1", 
-    control_weight_lambda = "0-1:1/3/5",
+    control_weight_lambda = "0-1:1/3.5/5",
     double_attention = False,
     single_attention = True,
     ip_scale = "0-1:0.85",
@@ -390,8 +390,10 @@ def create_min_image_input(index, open=True, indices_state=None):
     with gr.Column(min_width=256):
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
             caption = gr.Textbox(label=f"ENT{index + 1} Prompt", value="")
-            det_btn = gr.Button("Crop to Prompt")
+            
             face_btn = gr.Button("Crop to Face")
+            det_btn = gr.Button("Crop to Prompt")
+        
             id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=False)
             with gr.Row():
                 vlm_btn = gr.Button("Generate Caption", visible=False)
@@ -606,13 +608,13 @@ if __name__ == "__main__":
                     examples = gr.Examples(
                         examples=[
                             [
-                                "ENT1 wearing a tiny hat", 
-                                "sample/hamster.jpg", "a hamster",
-                                None, None,
+                                "ENT1 wearing ENT2", 
+                                "sample/woman2.jpg", "a woman",
+                                "sample/dress.jpg", "a dress",
                             ],
                             [
-                                "ENT1 in a red dress is smiling", 
-                                "sample/woman.jpg", "a woman",
+                                "ENT1 wearing a tiny hat", 
+                                "sample/hamster.jpg", "a hamster",
                                 None, None,
                             ],
                             [
