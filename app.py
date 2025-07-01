@@ -47,13 +47,6 @@ snapshot_download(
 )
 
 
-# # FLUX.1-dev
-# snapshot_download(
-#     repo_id="black-forest-labs/FLUX.1-dev",
-#     local_dir="./checkpoints/FLUX.1-dev",
-#     local_dir_use_symlinks=False
-# )
-
 # Florence-2-large
 snapshot_download(
     repo_id="microsoft/Florence-2-large",
@@ -101,7 +94,6 @@ os.environ["FLORENCE2_MODEL_PATH"]    = "./checkpoints/Florence-2-large"
 os.environ["SAM2_MODEL_PATH"]         = "./checkpoints/sam2.1_hiera_large.pt"
 os.environ["FACE_ID_MODEL_PATH"]      = "./checkpoints/model_ir_se50.pth"
 os.environ["CLIP_MODEL_PATH"]         = "./checkpoints/clip-vit-large-patch14"
-# os.environ["FLUX_MODEL_PATH"]         = "./checkpoints/FLUX.1-dev"
 os.environ["FLUX_MODEL_PATH"]         = "./checkpoints/FLUX.1-schnell"
 
 os.environ["DPG_VQA_MODEL_PATH"]      = "./checkpoints/mplug_visual-question-answering_coco_large_en"
@@ -379,8 +371,8 @@ def create_image_input(index, open=True, indices_state=None):
             id_ip_checkbox = gr.Checkbox(value=False, label=f"ID or not {index + 1}", visible=True)
             with gr.Row():
                 vlm_btn = gr.Button("Generate Caption")
-                det_btn = gr.Button("Det & Seg")
                 face_btn = gr.Button("Crop Face")
+                det_btn = gr.Button("Crop to Prompt")
             accordion.expand(
                     inputs=[indices_state],
                     fn = lambda x: update_inputs(True, index, x), 
@@ -399,10 +391,10 @@ def create_min_image_input(index, open=True, indices_state=None):
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
             caption = gr.Textbox(label=f"ENT{index + 1}", value="")
             face_btn = gr.Button("Crop Face")
+            det_btn = gr.Button("Crop to Prompt")
             id_ip_checkbox = gr.Checkbox(value=True, label=f"ID or not {index + 1}", visible=False)
             with gr.Row():
                 vlm_btn = gr.Button("Generate Caption", visible=False)
-                det_btn = gr.Button("Det & Seg", visible=False)
                 
                 
     return image, caption, face_btn, det_btn, vlm_btn, id_ip_checkbox
