@@ -22,7 +22,6 @@ from diffusers.models.transformers.transformer_flux import (
     FluxTransformer2DModel,
     Transformer2DModelOutput,
     USE_PEFT_BACKEND,
-    is_torch_version,
     scale_lora_layers,
     unscale_lora_layers,
     logger,
@@ -63,7 +62,10 @@ def prepare_params(
         return_dict,
     )
 
-
+def is_torch_version(spec: str) -> bool:
+    # e.g. spec = ">=1.12.0"
+    return version.parse(torch.__version__) in version.SpecifierSet(spec)
+    
 def tranformer_forward(
     transformer: FluxTransformer2DModel,
     condition_latents: torch.Tensor,
