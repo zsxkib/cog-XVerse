@@ -261,7 +261,7 @@ def generate_image(
     use_words = []
     cur_run_time = time.strftime("%m%d-%H%M%S")
     tmp_dir_root = f"tmp/gradio_demo/{run_name}"
-    temp_dir = f"{tmp_dir_root}/{cur_run_time}_{generate_random_string(4)}"
+    temp_dir = f"{tmp_dir_root}/{session_id}/{cur_run_time}_{generate_random_string(4)}"
     os.makedirs(temp_dir, exist_ok=True)
     print(f"Temporary directory created: {temp_dir}")
     for i, (image_path, caption) in enumerate(zip(images, captions)):
@@ -275,7 +275,7 @@ def generate_image(
                 prompt = prompt.replace(f"ENT{i+1}", caption)
             
             image = resize_keep_aspect_ratio(Image.open(image_path), 768)
-            save_path = f"{temp_dir}/{session_id}/tmp_resized_input_{i}.png"
+            save_path = f"{temp_dir}/tmp_resized_input_{i}.png"
             image.save(save_path)
             
             input_image_path = save_path
@@ -313,7 +313,7 @@ def generate_image(
             ),
         ]
     
-    json_dump(test_sample, f"{temp_dir}/{session_id}/test_sample.json", 'utf-8')
+    json_dump(test_sample, f"{temp_dir}/test_sample.json", 'utf-8')
     assert single_attention == True
     target_size = int(round((target_width * target_height) ** 0.5) // 16 * 16)
     print(test_sample)
