@@ -215,32 +215,31 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
 
 @spaces.GPU()
 def generate_image(
-    prompt,     
-    cond_size, target_height, target_width, 
+    prompt,   
+    image_1, caption_1, use_id_1,
+    image_2, caption_2, use_id_2,
+    cond_size, 
+    target_height, 
+    target_width, 
     seed, 
-    vae_skip_iter, control_weight_lambda,
+    vae_skip_iter, 
+    control_weight_lambda,
     double_attention,
     single_attention,
     ip_scale,
-    latent_sblora_scale_str, vae_lora_scale,
-    indices,
+    latent_sblora_scale_str, 
+    vae_lora_scale,
     session_id,
-    *images_captions_faces,
 ):
     torch.cuda.empty_cache()
     num_images = 1
 
-    images = list(images_captions_faces[:num_inputs])
-    captions = list(images_captions_faces[num_inputs:2 * num_inputs])
-    idips_checkboxes = list(images_captions_faces[2 * num_inputs:3 * num_inputs])
-                            
-    images = [images[i] for i in indices]
-    captions = [captions[i] for i in indices]
-    idips_checkboxes = [idips_checkboxes[i] for i in indices]
+    images = [image_1, image_2]
+    captions = [caption_1, caption_2]
+    idips_checkboxes = [use_id_1, use_id_2]
 
     print(f"Length of images: {len(images)}")
     print(f"Length of captions: {len(captions)}")
-    print(f"indices: {indices}")
     
     print(f"Control weight lambda: {control_weight_lambda}")
     if control_weight_lambda != "no":
@@ -649,7 +648,8 @@ if __name__ == "__main__":
                     #         ],
                     #     ],
                     #     inputs=[
-                    #         prompt, seed, 
+                    #         prompt, 
+                    #         seed, 
                     #         cond_size,
                     #         target_height,
                     #         target_width,
@@ -673,15 +673,21 @@ if __name__ == "__main__":
         gen_btn.click(
             generate_image, 
             inputs=[
-                prompt, cond_size, target_height, target_width, seed,
-                vae_skip_iter, weight_id_ip_str,
-                double_attention, single_attention,
-                db_latent_lora_scale_str, sb_latent_lora_scale_str, vae_lora_scale_str,
-                indices_state,
+                prompt, 
+                images[0], captions[0], idip_checkboxes[0],
+                images[1], captions[1], idip_checkboxes[1],  
+                cond_size, 
+                target_height, 
+                target_width, 
+                seed,
+                vae_skip_iter, 
+                weight_id_ip_str,
+                double_attention, 
+                single_attention,
+                db_latent_lora_scale_str, 
+                sb_latent_lora_scale_str, 
+                vae_lora_scale_str,
                 session_state,
-                *images,  
-                *captions, 
-                *idip_checkboxes,
             ], 
             outputs=output
         )
