@@ -39,6 +39,9 @@ import numpy as np
 from huggingface_hub import snapshot_download, hf_hub_download
 import torch
 
+
+os.environ["XVERSE_PREPROCESSED_DATA"] = f"{os.getcwd()}/proprocess_data"
+
 # # FLUX.1-dev
 # snapshot_download(
 #     repo_id="black-forest-labs/FLUX.1-dev",
@@ -259,7 +262,7 @@ def generate_image(
     src_inputs = []
     use_words = []
     cur_run_time = time.strftime("%m%d-%H%M%S")
-    tmp_dir_root = f"tmp/gradio_demo/{run_name}"
+    tmp_dir_root = f"{os.environ["XVERSE_PREPROCESSED_DATA"]}"
     temp_dir = f"{tmp_dir_root}/{session_id}/{cur_run_time}_{generate_random_string(4)}"
     os.makedirs(temp_dir, exist_ok=True)
     print(f"Temporary directory created: {temp_dir}")
@@ -452,6 +455,23 @@ def start_session(request: gr.Request):
     """
     return request.session_hash
 
+# Cleanup on unload
+def cleanup(request: gr.Request):
+    """
+    Clean up session-specific directories and temporary files when the user session ends.
+    
+    This function is triggered when the Gradio demo is unloaded (e.g., when the user
+    closes the browser tab or navigates away). It removes all temporary files and
+    directories created during the user's session to free up storage space.
+    
+    Args:
+        request (gr.Request): Gradio request object containing session information
+    """
+    sid = request.session_hash
+    if sid:
+        d1 = os.path.join(os.environ["XVERSE_PREPROCESSED_DATA"], sid)
+        shutil.rmtree(d1, ignore_errors=True)
+
 css = """
 #col-container {
     margin: 0 auto;
@@ -595,6 +615,7 @@ if __name__ == "__main__":
             det_btns[i].click(det_seg_img, inputs=[images[i], captions[i]], outputs=[images[i]])
             vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
             images[i].upload(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
-    
+
+    demo.unload(cleanup)
     demo.queue()
     demo.launch()
