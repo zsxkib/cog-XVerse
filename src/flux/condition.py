@@ -20,7 +20,7 @@ from PIL import Image, ImageFilter
 import numpy as np
 import cv2
 
-# from .pipeline_tools import encode_vae_images
+from .pipeline_tools import encode_vae_images
 
 # condition_dict = {
 #     "depth": 0,
