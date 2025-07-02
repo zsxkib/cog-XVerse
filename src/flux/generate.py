@@ -515,6 +515,7 @@ def generate(
 def generate_from_test_sample(
     test_sample, pipe, config, 
     num_images=1, 
+    num_inference_steps = 8,
     vae_skip_iter: str = None, 
     target_height: int = None,
     target_width: int = None,
@@ -708,7 +709,6 @@ def generate_from_test_sample(
             return delta_emb, delta_emb_pblock, delta_emb_mask, \
                 text_cond_mask, delta_start_ends, condition_latents, condition_ids
     
-    num_inference_steps = 8 # FIXME: harcoded here
     num_channels_latents = pipe.transformer.config.in_channels // 4
 
     # set timesteps
@@ -801,6 +801,7 @@ def generate_from_test_sample(
         result_img = generate(
             pipe,
             prompt=prompt,
+            num_inference_steps=num_inference_steps,
             max_sequence_length=max_length,
             vae_conditions=conditions,
             generator=generator,
