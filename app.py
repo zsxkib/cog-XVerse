@@ -631,6 +631,7 @@ if __name__ == "__main__":
                             prompt, 
                             images[0], captions[0],
                             images[1], captions[1],  
+                            images[2], captions[2],  
                         ],
                         outputs=output,
                         fn=generate_image,
