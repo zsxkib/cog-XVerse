@@ -237,7 +237,7 @@ def generate_image(
         images.append(image_1)
         captions.append(caption_1)
         idips_checkboxes.append(True)
-    else image_2 != None:
+    elif image_2 != None:
         images.append(image_2)
         captions.append(caption_2)
         idips_checkboxes.append(True)
