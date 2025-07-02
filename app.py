@@ -204,7 +204,7 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
     return pil_image.resize((new_W, new_H))
 
 
-@spaces.GPU(duration=75)
+@spaces.GPU()
 def generate_image(
     prompt,   
     image_1, caption_1,
