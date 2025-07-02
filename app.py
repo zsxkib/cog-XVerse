@@ -360,10 +360,7 @@ def generate_image(
         num_rows = int(math.ceil(num_images / num_cols))
         image = image_grid(image, num_rows, num_cols)
 
-    # save_path = f"{temp_dir}/tmp_result.png"
-    # image.save(save_path)
-
-    return image
+    return image, prompt
 
 def create_image_input(index, open=True, indices_state=None):
     accordion_state = gr.State(open)
@@ -608,6 +605,7 @@ if __name__ == "__main__":
             
                 with gr.Column():
                     output = gr.Image(label="Result")
+                    final_text = gr.Textbox(show_label=False, interactive=False)
                     
                     examples = gr.Examples(
                         examples=[
@@ -632,7 +630,7 @@ if __name__ == "__main__":
                             images[0], captions[0],
                             images[1], captions[1],  
                         ],
-                        outputs=output,
+                        outputs=[output, final_text],
                         fn=generate_image,
                         cache_examples=True,
                     )
@@ -663,7 +661,7 @@ if __name__ == "__main__":
                 vae_lora_scale_str,
                 session_state,
             ], 
-            outputs=output
+            outputs=[output, final_text]
         )
         clear_btn.click(clear_images, outputs=images)
 
