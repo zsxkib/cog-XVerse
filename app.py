@@ -608,7 +608,7 @@ if __name__ == "__main__":
                     examples = gr.Examples(
                         examples=[
                             [
-                                "ENT1 wearing ENT2", 
+                                "ENT1 wearing ENT2 at Met Gala", 
                                 "sample/woman2.jpg", "a woman",
                                 "sample/dress.jpg", "a dress",
                             ],
@@ -661,7 +661,7 @@ if __name__ == "__main__":
         clear_btn.click(clear_images, outputs=images)
 
         for i in range(num_inputs):
-            face_btns[i].click(crop_face_img, inputs=[images[i]], outputs=[images[i]])
+            face_btns[i].click(det_seg_img, inputs=[images[i], gr.State("A face")], outputs=[images[i]])
             det_btns[i].click(det_seg_img, inputs=[images[i], captions[i]], outputs=[images[i]])
             vlm_btns[i].click(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
             # images[i].upload(vlm_img_caption, inputs=[images[i]], outputs=[captions[i]])
