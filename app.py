@@ -238,6 +238,17 @@ def generate_image(
     captions = [caption_1, caption_2, caption_3]
     idips_checkboxes = [use_id_1, use_id_2, use_id_3]
 
+    # ——— Fallback to VLM caption if any caption is empty ———
+    for idx, (img, cap) in enumerate(zip(images, captions)):
+        if img is not None:
+            if not cap or cap.strip() == "":
+                try:
+                    captions[idx] = vlm_img_caption(img)
+                except Exception as e:
+                    # if captioning fails, leave it empty or log as you wish
+                    print(f"Failed to generate caption for image {idx}: {e}")
+    # ————————————————————————————————————————————————————————
+
     print(f"Length of images: {len(images)}")
     print(f"Length of captions: {len(captions)}")
     
