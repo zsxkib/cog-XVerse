@@ -708,7 +708,7 @@ def generate_from_test_sample(
             return delta_emb, delta_emb_pblock, delta_emb_mask, \
                 text_cond_mask, delta_start_ends, condition_latents, condition_ids
     
-    num_inference_steps = 4 # FIXME: harcoded here
+    num_inference_steps = 28 # FIXME: harcoded here
     num_channels_latents = pipe.transformer.config.in_channels // 4
 
     # set timesteps
