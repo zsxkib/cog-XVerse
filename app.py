@@ -208,7 +208,9 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
 def generate_image(
     prompt,   
     image_1, caption_1,
-    image_2 = None, caption_2 = None,
+    image_2, caption_2,
+    use_id_1 = True,
+    use_id_2 = True,
     cond_size = 256, 
     target_height = 768, 
     target_width = 768, 
@@ -229,18 +231,9 @@ def generate_image(
     torch.cuda.empty_cache()
     num_images = 1
 
-    images = []
-    captions = []
-    idips_checkboxes = []
-
-    if image_1 != None:
-        images.append(image_1)
-        captions.append(caption_1)
-        idips_checkboxes.append(True)
-    elif image_2 != None:
-        images.append(image_2)
-        captions.append(caption_2)
-        idips_checkboxes.append(True)
+    images = [image_1, image_2]
+    captions = [caption_1, caption_2]
+    idips_checkboxes = [use_id_1, use_id_2]
 
     print(f"Length of images: {len(images)}")
     print(f"Length of captions: {len(captions)}")
@@ -647,6 +640,8 @@ if __name__ == "__main__":
                 prompt, 
                 images[0], captions[0], 
                 images[1], captions[1], 
+                idip_checkboxes[0],
+                idip_checkboxes[1],  
                 cond_size, 
                 target_height, 
                 target_width, 
