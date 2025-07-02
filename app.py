@@ -121,7 +121,7 @@ run_mode = "mod_only"
 store_attn_map = False
 run_name = time.strftime("%m%d-%H%M")
 
-num_inputs = 2
+num_inputs = 3
 
 images = []
 captions = []
@@ -209,8 +209,10 @@ def generate_image(
     prompt,   
     image_1, caption_1,
     image_2, caption_2,
+    image_3, caption_3,
     use_id_1 = True,
     use_id_2 = True,
+    use_id_3 = True,
     cond_size = 256, 
     target_height = 768, 
     target_width = 768, 
@@ -231,9 +233,9 @@ def generate_image(
     torch.cuda.empty_cache()
     num_images = 1
 
-    images = [image_1, image_2]
-    captions = [caption_1, caption_2]
-    idips_checkboxes = [use_id_1, use_id_2]
+    images = [image_1, image_2, image_3]
+    captions = [caption_1, caption_2, caption_3]
+    idips_checkboxes = [use_id_1, use_id_2, use_id_3]
 
     print(f"Length of images: {len(images)}")
     print(f"Length of captions: {len(captions)}")
@@ -386,7 +388,7 @@ def create_image_input(index, open=True, indices_state=None):
 
 def create_min_image_input(index, open=True, indices_state=None):
 
-    with gr.Column(min_width=256):
+    with gr.Column(min_width=128):
             image = gr.Image(type="filepath", label=f"Image {index + 1}")
             caption = gr.Textbox(label=f"ENT{index + 1} Prompt", value="")
             
@@ -483,7 +485,7 @@ def cleanup(request: gr.Request):
 css = """
 #col-container {
     margin: 0 auto;
-    max-width: 1096px;
+    max-width: 1400px;
 }
 """
 
@@ -610,16 +612,19 @@ if __name__ == "__main__":
                                 "ENT1 with long curly hair wearing ENT2 at Met Gala", 
                                 "sample/woman2.jpg", "a woman",
                                 "sample/dress.jpg", "a dress",
+                                None, None,
                             ],
                             [
                                 "ENT1 wearing a tiny hat", 
                                 "sample/hamster.jpg", "a hamster",
+                                None, None,
                                 None, None,
                             ],
                             [
                                 "ENT1 holding ENT2 in a park.", 
                                 "sample/woman.jpg", "a woman",
                                 "sample/hamster.jpg", "a hamster",
+                                None, None,
                             ],
                         ],
                         inputs=[
@@ -640,8 +645,10 @@ if __name__ == "__main__":
                 prompt, 
                 images[0], captions[0], 
                 images[1], captions[1], 
+                images[2], captions[2], 
                 idip_checkboxes[0],
                 idip_checkboxes[1],  
+                idip_checkboxes[2],  
                 cond_size, 
                 target_height, 
                 target_width, 
