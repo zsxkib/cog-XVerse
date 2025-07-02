@@ -121,7 +121,7 @@ run_mode = "mod_only"
 store_attn_map = False
 run_name = time.strftime("%m%d-%H%M")
 
-num_inputs = 3
+num_inputs = 2
 
 images = []
 captions = []
@@ -209,7 +209,6 @@ def generate_image(
     prompt,   
     image_1, caption_1,
     image_2 = None, caption_2 = None,
-    image_3 = None, caption_3 = None,
     cond_size = 256, 
     target_height = 768, 
     target_width = 768, 
@@ -242,11 +241,7 @@ def generate_image(
         images.append(image_2)
         captions.append(caption_2)
         idips_checkboxes.append(True)
-    elif image_3 != None:
-        images.append(image_3)
-        captions.append(caption_3)
-        idips_checkboxes.append(True)
-        
+
     print(f"Length of images: {len(images)}")
     print(f"Length of captions: {len(captions)}")
     
@@ -495,7 +490,7 @@ def cleanup(request: gr.Request):
 css = """
 #col-container {
     margin: 0 auto;
-    max-width: 1400px;
+    max-width: 1096px;
 }
 """
 
@@ -652,7 +647,6 @@ if __name__ == "__main__":
                 prompt, 
                 images[0], captions[0], 
                 images[1], captions[1], 
-                images[2], captions[2], 
                 cond_size, 
                 target_height, 
                 target_width, 
