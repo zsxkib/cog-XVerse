@@ -339,7 +339,7 @@ def generate_image(
     use_latent_sblora_control = True
     image = generate_from_test_sample(
         test_sample, model.pipe, model.config, 
-        num_inference_steps=num_inference_steps
+        num_inference_steps=num_inference_steps,
         num_images=num_images, 
         target_height=target_height,
         target_width=target_width,
