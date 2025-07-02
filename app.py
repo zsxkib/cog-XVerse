@@ -519,7 +519,7 @@ if __name__ == "__main__":
                                 
                     prompt = gr.Textbox(label="Prompt", placeholder="e.g., ENT1 and ENT2")
                     gen_btn = gr.Button("Generate", variant="primary")
-                    steps_slider = gr.Slider(minimum=4, maximum=40, step=8, value=num_inference_steps, label="inference steps")
+                    steps_slider = gr.Slider(minimum=4, maximum=40, step=1, value=8, label="inference steps")
                     with gr.Accordion("Advanced Settings", open=False):
 
                         seed = gr.Number(value=42, label="Seed", info="")
