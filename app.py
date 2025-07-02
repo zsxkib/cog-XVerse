@@ -208,8 +208,8 @@ def resize_keep_aspect_ratio(pil_image, target_size=1024):
 def generate_image(
     prompt,   
     image_1, caption_1,
-    image_2, caption_2,
-    image_3, caption_3,
+    image_2 = None, caption_2 = None,
+    image_3 = None, caption_3 = None,
     use_id_1 = True,
     use_id_2 = True,
     use_id_3 = True,
@@ -612,26 +612,22 @@ if __name__ == "__main__":
                                 "ENT1 with long curly hair wearing ENT2 at Met Gala", 
                                 "sample/woman2.jpg", "a woman",
                                 "sample/dress.jpg", "a dress",
-                                " ", " ",
                             ],
                             [
                                 "ENT1 wearing a tiny hat", 
                                 "sample/hamster.jpg", "a hamster",
-                                " ", " ",
-                                " ", " ",
+                                None, None
                             ],
                             [
                                 "a drawing of ENT1 and ENT2 that the ENT1 is running alongside of a giant ENT2, in style of a comic book", 
                                 "sample/woman.jpg", "a woman",
                                 "sample/hamster.jpg", "a hamster",
-                                " ", " ",
                             ],
                         ],
                         inputs=[
                             prompt, 
                             images[0], captions[0],
                             images[1], captions[1],  
-                            images[2], captions[2],  
                         ],
                         outputs=output,
                         fn=generate_image,
