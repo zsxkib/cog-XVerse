@@ -495,7 +495,7 @@ def cleanup(request: gr.Request):
 css = """
 #col-container {
     margin: 0 auto;
-    max-width: 1096px;
+    max-width: 1400px;
 }
 """
 
