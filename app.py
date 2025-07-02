@@ -612,19 +612,19 @@ if __name__ == "__main__":
                                 "ENT1 with long curly hair wearing ENT2 at Met Gala", 
                                 "sample/woman2.jpg", "a woman",
                                 "sample/dress.jpg", "a dress",
-                                "", "",
+                                " ", " ",
                             ],
                             [
                                 "ENT1 wearing a tiny hat", 
                                 "sample/hamster.jpg", "a hamster",
-                                "", "",
-                                "", "",
+                                " ", " ",
+                                " ", " ",
                             ],
                             [
                                 "a drawing of ENT1 and ENT2 that the ENT1 is running alongside of a giant ENT2, in style of a comic book", 
                                 "sample/woman.jpg", "a woman",
                                 "sample/hamster.jpg", "a hamster",
-                                "", "",
+                                " ", " ",
                             ],
                         ],
                         inputs=[
