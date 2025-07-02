@@ -608,7 +608,7 @@ if __name__ == "__main__":
                     examples = gr.Examples(
                         examples=[
                             [
-                                "ENT1 wearing ENT2 at Met Gala", 
+                                "ENT1 wearing ENT2", 
                                 "sample/woman2.jpg", "a woman",
                                 "sample/dress.jpg", "a dress",
                             ],
