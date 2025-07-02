@@ -51,7 +51,7 @@ def prepare_params(
     prompt_2: Optional[Union[str, List[str]]] = None,
     height: Optional[int] = 512,
     width: Optional[int] = 512,
-    num_inference_steps: int = 4,
+    num_inference_steps: int = 8,
     timesteps: List[int] = None,
     guidance_scale: float = 3.5,
     num_images_per_prompt: Optional[int] = 1,
@@ -708,7 +708,7 @@ def generate_from_test_sample(
             return delta_emb, delta_emb_pblock, delta_emb_mask, \
                 text_cond_mask, delta_start_ends, condition_latents, condition_ids
     
-    num_inference_steps = 4 # FIXME: harcoded here
+    num_inference_steps = 8 # FIXME: harcoded here
     num_channels_latents = pipe.transformer.config.in_channels // 4
 
     # set timesteps
