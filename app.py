@@ -326,7 +326,6 @@ def generate_image(
     json_dump(test_sample, f"{temp_dir}/test_sample.json", 'utf-8')
     assert single_attention == True
     target_size = int(round((target_width * target_height) ** 0.5) // 16 * 16)
-    print(test_sample)
 
     model.config["train"]["dataset"]["val_condition_size"] = cond_size
     model.config["train"]["dataset"]["val_target_size"] = target_size
