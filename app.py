@@ -244,10 +244,23 @@ def generate_image(
             if not cap or cap.strip() == "":
                 try:
                     captions[idx] = vlm_img_caption(img)
+
+                    gr.Info(f"ENT{idx+1} Prompt Missing. Auto Generating Caption")
                 except Exception as e:
                     # if captioning fails, leave it empty or log as you wish
                     print(f"Failed to generate caption for image {idx}: {e}")
     # ————————————————————————————————————————————————————————
+
+    # ——— Build a default prompt if none was provided ———
+    if not prompt or prompt.strip() == "":
+        
+        # collect ENT1, ENT2, … for every non-None image
+        ents = [f"ENT{i+1}" for i, img in enumerate(images) if img is not None]
+        # join them with spaces (or “ and ” if you prefer)
+        prompt = " and ".join(ents)
+        # e.g. prompt becomes "ENT1 ENT2" or "ENT1 ENT2 ENT3"
+        gr.Info(f"Prompt Not Provided, Defaulting to {prompt}")
+    # ————————————————————————————————————————
 
     print(f"Length of images: {len(images)}")
     print(f"Length of captions: {len(captions)}")
