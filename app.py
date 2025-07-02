@@ -213,6 +213,7 @@ def generate_image(
     use_id_1 = True,
     use_id_2 = True,
     use_id_3 = True,
+    num_inference_steps = 8,
     cond_size = 256, 
     target_height = 768, 
     target_width = 768, 
@@ -338,6 +339,7 @@ def generate_image(
     use_latent_sblora_control = True
     image = generate_from_test_sample(
         test_sample, model.pipe, model.config, 
+        num_inference_steps=num_inference_steps
         num_images=num_images, 
         target_height=target_height,
         target_width=target_width,
@@ -517,6 +519,7 @@ if __name__ == "__main__":
                                 
                     prompt = gr.Textbox(label="Prompt", placeholder="e.g., ENT1 and ENT2")
                     gen_btn = gr.Button("Generate", variant="primary")
+                    steps_slider = gr.Slider(minimum=4, maximum=40, step=8, value=num_inference_steps, label="inference steps")
                     with gr.Accordion("Advanced Settings", open=False):
 
                         seed = gr.Number(value=42, label="Seed", info="")
@@ -646,6 +649,7 @@ if __name__ == "__main__":
                 idip_checkboxes[0],
                 idip_checkboxes[1],  
                 idip_checkboxes[2],  
+                steps_slider,
                 cond_size, 
                 target_height, 
                 target_width, 
