@@ -537,7 +537,7 @@ if __name__ == "__main__":
                 
                         with gr.Row():
                             weight_id_ip_str = gr.Textbox(
-                                value="0-1:1/3/5",
+                                value="0-1:1/1.6/5",
                                 label="weight_id_ip_str",
                                 interactive=False, visible=False
                             )
@@ -612,22 +612,32 @@ if __name__ == "__main__":
                                 "ENT1 with long curly hair wearing ENT2 at Met Gala", 
                                 "sample/woman2.jpg", "a woman",
                                 "sample/dress.jpg", "a dress",
+                                None, None,
                             ],
                             [
                                 "ENT1 wearing a tiny hat", 
                                 "sample/hamster.jpg", "a hamster",
-                                None, None
+                                None, None,
+                                None, None,
                             ],
                             [
                                 "a drawing of ENT1 and ENT2 that the ENT1 is running alongside of a giant ENT2, in style of a comic book", 
                                 "sample/woman.jpg", "a woman",
                                 "sample/hamster.jpg", "a hamster",
+                                None, None,
+                            ],
+                            [
+                                "ENT1 with ENT2 holding ENT3", 
+                                "sample/sam.jpg", "a man",
+                                "sample/hair.jpg", "curly hair",
+                                "sample/can.jpg", "a can",
                             ],
                         ],
                         inputs=[
                             prompt, 
                             images[0], captions[0],
                             images[1], captions[1],  
+                            images[2], captions[2],  
                         ],
                         outputs=[output, final_text],
                         fn=generate_image,
