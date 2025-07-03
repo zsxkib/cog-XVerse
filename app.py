@@ -34,6 +34,7 @@ import yaml
 import numpy as np
 from huggingface_hub import snapshot_download, hf_hub_download
 import torch
+import re
 
 
 os.environ["XVERSE_PREPROCESSED_DATA"] = f"{os.getcwd()}/proprocess_data"
@@ -304,9 +305,14 @@ def generate_image(
                 word = caption[2:]
             else:
                 word = caption
-            
-            if f"ENT{i+1}" in prompt:
-                prompt = prompt.replace(f"ENT{i+1}", caption)
+
+            # case-insensitive replace of the ENT token
+            prompt = re.sub(
+                rf"ent{i+1}",    # match "ent1", "ENT1", "Ent1", etc.
+                caption,
+                prompt,
+                flags=re.IGNORECASE
+            )
             
             image = resize_keep_aspect_ratio(Image.open(image_path), 768)
             save_path = f"{temp_dir}/tmp_resized_input_{i}.png"
