@@ -1,13 +1,30 @@
----
-title: XVerse
-emoji: 🖼️
-colorFrom: indigo
-colorTo: indigo
-sdk: gradio
-sdk_version: 5.35.0
-app_file: app.py
-pinned: false
-short_description: Consistent Multi-Subject Control of Identity and Semantic
+# XVerse
+
+Consistent Multi-Subject Control of Identity and Semantic
+
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+## Getting Started
+
+This is a comprehensive guide for setting up and deploying the XVerse app using Cog.
+
+## Installation
+
+1. Clone the repository and navigate to the project directory.
+2. Configure your environment according to the provided setup instructions.
+3. Ensure all dependencies are installed.
+
+## Features
+
+- Predicts based on multi-subject control of identity
+- Utilizes Cog for Dockerized deployment
+- Provides a Gradio interface for interaction
+
+## License
+
+MIT
+
+---
+
+⭐⭐ Star this project on [GitHub](https://github.com/zsxkib/cog-XVerse)!
+👋 Follow `zsxkib` on [Twitter/X](https://twitter.com/zsakib_)
