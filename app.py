@@ -148,7 +148,7 @@ attn_skip_iter = 0
 
 
 def clear_images():
-    return [None, ]*num_inputs
+    return [None, ]*num_inputs + ["", ]*num_inputs 
 
 @spaces.GPU()
 def det_seg_img(image, label):
@@ -542,6 +542,7 @@ if __name__ == "__main__":
                                 
                     prompt = gr.Textbox(label="Prompt", placeholder="e.g., ENT1 and ENT2")
                     gen_btn = gr.Button("Generate", variant="primary")
+                    clear_btn = gr.Button("Clear")
                     steps_slider = gr.Slider(minimum=4, maximum=40, step=1, value=8, label="inference steps")
                     with gr.Accordion("Advanced Settings", open=False):
 
@@ -625,8 +626,7 @@ if __name__ == "__main__":
                         with gr.Row():
                             double_attention = gr.Checkbox(value=False, label="Double Attention", visible=False)
                             single_attention = gr.Checkbox(value=True, label="Single Attention", visible=False)            
-        
-                        clear_btn = gr.Button("Clear Images")
+    
     
             
                 with gr.Column():
@@ -635,6 +635,13 @@ if __name__ == "__main__":
                     
                     examples = gr.Examples(
                         examples=[
+                            [
+                                "ENT1 with ENT2 holding ENT3", 
+                                "sample/sam.jpg", "a man",
+                                "sample/hair.jpg", "curly hair",
+                                "sample/can.jpg", "a can",
+                                24,
+                            ],
                             [
                                 "ENT1 with long curly hair wearing ENT2 at Met Gala", 
                                 "sample/woman2.jpg", "a woman",
@@ -657,11 +664,11 @@ if __name__ == "__main__":
                                 8,
                             ],
                             [
-                                "ENT1 with ENT2 holding ENT3", 
-                                "sample/sam.jpg", "a man",
-                                "sample/hair.jpg", "curly hair",
-                                "sample/can.jpg", "a can",
-                                24,
+                                "a drawing of ENT1 and ENT2 that the ENT1 is running alongside of a giant ENT2, in style of a comic book", 
+                                "sample/woman3.jpg", "a woman",
+                                "sample/hamster.jpg", "a hamster",
+                                None, None,
+                                8,
                             ],
                         ],
                         inputs=[
@@ -701,7 +708,7 @@ if __name__ == "__main__":
             ], 
             outputs=[output, final_text]
         )
-        clear_btn.click(clear_images, outputs=images)
+        clear_btn.click(clear_images, outputs=images + captions)
 
         for i in range(num_inputs):
             face_btns[i].click(det_seg_img, inputs=[images[i], gr.State("A face")], outputs=[images[i]])
@@ -711,4 +718,4 @@ if __name__ == "__main__":
 
     demo.unload(cleanup)
     demo.queue()
-    demo.launch()
+    demo.launch(share=True)
