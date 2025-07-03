@@ -211,9 +211,6 @@ def generate_image(
     image_1, caption_1,
     image_2 = None, caption_2 = None,
     image_3 = None, caption_3 = None,
-    use_id_1 = True,
-    use_id_2 = True,
-    use_id_3 = True,
     num_inference_steps = 8,
     cond_size = 256, 
     target_height = 768, 
@@ -237,7 +234,7 @@ def generate_image(
 
     images = [image_1, image_2, image_3]
     captions = [caption_1, caption_2, caption_3]
-    idips_checkboxes = [use_id_1, use_id_2, use_id_3]
+    idips_checkboxes = [True, True, True]
 
     # ——— Fallback to VLM caption if any caption is empty ———
     for idx, (img, cap) in enumerate(zip(images, captions)):
@@ -643,24 +640,28 @@ if __name__ == "__main__":
                                 "sample/woman2.jpg", "a woman",
                                 "sample/dress.jpg", "a dress",
                                 None, None,
+                                8,
                             ],
                             [
                                 "ENT1 wearing a tiny hat", 
                                 "sample/hamster.jpg", "a hamster",
                                 None, None,
                                 None, None,
+                                8,
                             ],
                             [
                                 "a drawing of ENT1 and ENT2 that the ENT1 is running alongside of a giant ENT2, in style of a comic book", 
                                 "sample/woman.jpg", "a woman",
                                 "sample/hamster.jpg", "a hamster",
                                 None, None,
+                                8,
                             ],
                             [
                                 "ENT1 with ENT2 holding ENT3", 
                                 "sample/sam.jpg", "a man",
                                 "sample/hair.jpg", "curly hair",
                                 "sample/can.jpg", "a can",
+                                24,
                             ],
                         ],
                         inputs=[
@@ -668,6 +669,7 @@ if __name__ == "__main__":
                             images[0], captions[0],
                             images[1], captions[1],  
                             images[2], captions[2],  
+                            steps_slider,
                         ],
                         outputs=[output, final_text],
                         fn=generate_image,
@@ -682,10 +684,7 @@ if __name__ == "__main__":
                 prompt, 
                 images[0], captions[0], 
                 images[1], captions[1], 
-                images[2], captions[2], 
-                idip_checkboxes[0],
-                idip_checkboxes[1],  
-                idip_checkboxes[2],  
+                images[2], captions[2],  
                 steps_slider,
                 cond_size, 
                 target_height, 
